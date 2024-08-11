@@ -8,12 +8,16 @@ import {
   addEdge,
   Connection,
   Edge,
+  useReactFlow,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import StickyNote from "./cards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
+import NotesIconsMenu from "./notesIconsMenu";
+import { v4 as uuidV4 } from "uuid";
 
 const nodeTypes = { stickyNote: StickyNote };
 const edgeTypes = {
@@ -50,6 +54,38 @@ const initialNodes = [
 function WhiteBoard() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const { screenToFlowPosition } = useReactFlow();
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData("application/reactflow");
+
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
+
+      const position = screenToFlowPosition({
+        x: event.clientX - 86,
+        y: event.clientY - 20,
+      });
+      const newNode = {
+        id: uuidV4(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [screenToFlowPosition]
+  );
 
   const onConnect = useCallback(
     (params: Connection) =>
@@ -64,24 +100,38 @@ function WhiteBoard() {
       ),
     [setEdges]
   );
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   return (
-    <div style={{ height: "100%" }}>
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        connectionLineComponent={FloatingConnectionLine}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-      >
-        <Background variant={BackgroundVariant.Dots} />
-        <Controls />
-      </ReactFlow>
+    <div className="w-full h-full relative">
+      <div className="reactflow-wrapper h-full w-full" ref={reactFlowWrapper}>
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          connectionLineComponent={FloatingConnectionLine}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+        >
+          <Background variant={BackgroundVariant.Dots} />
+          <Controls />
+        </ReactFlow>
+      </div>
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
+        <NotesIconsMenu />
+      </div>
     </div>
   );
 }
 
-export default WhiteBoard;
+const WhiteBoardAppWrapper = () => (
+  <ReactFlowProvider>
+    <WhiteBoard />
+  </ReactFlowProvider>
+);
+
+export default WhiteBoardAppWrapper;

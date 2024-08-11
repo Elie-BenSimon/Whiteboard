@@ -1,9 +1,9 @@
-import WhiteBoard from "./components/whiteboard";
+import WhiteBoardAppWrapper from "./components/whiteboard";
 
 function App() {
   return (
     <div className="relative h-screen">
-      <WhiteBoard />
+      <WhiteBoardAppWrapper />
     </div>
   );
 }

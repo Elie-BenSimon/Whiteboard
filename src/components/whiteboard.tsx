@@ -7,12 +7,18 @@ import {
   useNodesState,
   addEdge,
   Connection,
+  Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback } from "react";
 import StickyNote from "./cards/stickyNote";
+import FloatingEdge from "./flow/floatingEdge";
+import FloatingConnectionLine from "./flow/floatingConnectionLine";
 
 const nodeTypes = { stickyNote: StickyNote };
+const edgeTypes = {
+  floating: FloatingEdge,
+};
 
 const initialNodes = [
   {
@@ -43,12 +49,19 @@ const initialNodes = [
 
 function WhiteBoard() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   const onConnect = useCallback(
-    (connection: Connection) => {
-      setEdges((oldEdges) => addEdge(connection, oldEdges));
-    },
+    (params: Connection) =>
+      setEdges((eds: Edge[]) =>
+        addEdge(
+          {
+            ...params,
+            type: "floating",
+          },
+          eds
+        )
+      ),
     [setEdges]
   );
 
@@ -56,6 +69,8 @@ function WhiteBoard() {
     <div style={{ height: "100%" }}>
       <ReactFlow
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionLineComponent={FloatingConnectionLine}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}

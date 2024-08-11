@@ -1,78 +1,55 @@
 import { cn } from "@/lib/utils";
 import { Handle, NodeProps, Position, useConnection } from "@xyflow/react";
-import React from "react";
+import React, { useState } from "react";
 
 const StickyNote: React.FC<NodeProps> = ({ id }) => {
   const connection = useConnection();
   const connectionInProgress = connection.inProgress;
   const isTarget = connectionInProgress && connection.fromNode.id !== id;
 
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const box = event.currentTarget.getBoundingClientRect();
+    const mouseX = event.clientX - box.left;
+    const mouseY = event.clientY - box.top;
+
+    const top =
+      mouseY > box.height - 24 ? box.height - 24 : mouseY < 24 ? 0 : mouseY;
+    const left =
+      mouseX > box.width - 24 ? box.width - 24 : mouseX < 24 ? 0 : mouseX;
+
+    setPosition({ top, left });
+  };
+
   return (
-    <div className="relative group p-6">
+    <div className="relative group p-6 z-10" onMouseMove={handleMouseMove}>
+      {/* <button
+        className="absolute bg-blue-500 text-white px-2 py-1 rounded"
+        style={{ top: position.top, left: position.left }}
+      >
+        Suivez-moi
+      </button> */}
+      <Handle
+        id="source"
+        type="source"
+        position={Position.Right}
+        className={cn(
+          "bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0",
+          isTarget && "-z-10"
+        )}
+      />
       <div className="relative w-32 h-32 bg-yellow-100">
         <Handle
           id="target"
           type="target"
           position={Position.Right}
           className={cn(
-            "bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0",
-            isTarget && "z-20"
+            "bg-transparent -z-10 w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0",
+            isTarget && "z-10"
           )}
-        ></Handle>
-        <div>
-          <div className="h-full w-6 absolute top-0 right-0 translate-x-full">
-            <Handle
-              id="source-right"
-              type="source"
-              position={Position.Right}
-              className={cn(
-                "invisible w-6 h-6 bg-primary text-primary-foreground border-2 -translate-y-1/2 -translate-x-full group-hover:translate-x-0 top-1/2 flex justify-center items-center",
-                !connectionInProgress && "group-hover:visible"
-              )}
-            >
-              +
-            </Handle>
-          </div>
-          <div className="h-full w-6 absolute top-0 left-0 -translate-x-full">
-            <Handle
-              id="source-left"
-              type="source"
-              position={Position.Left}
-              className={cn(
-                "invisible w-6 h-6 bg-primary text-primary-foreground border-2 -translate-y-1/2 translate-x-full group-hover:translate-x-0 top-1/2 flex justify-center items-center",
-                !connectionInProgress && "group-hover:visible"
-              )}
-            >
-              +
-            </Handle>
-          </div>
-          <div className="w-full h-6 absolute top-0 left-0 -translate-y-full">
-            <Handle
-              id="source-top"
-              type="source"
-              position={Position.Top}
-              className={cn(
-                "invisible w-6 h-6 bg-primary text-primary-foreground border-2 -translate-x-1/2 translate-y-full group-hover:translate-y-0 left-1/2 flex justify-center items-center",
-                !connectionInProgress && "group-hover:visible"
-              )}
-            >
-              +
-            </Handle>
-          </div>
-          <div className="w-full h-6 absolute bottom-0 left-0 translate-y-full">
-            <Handle
-              id="source-bottom"
-              type="source"
-              position={Position.Bottom}
-              className={cn(
-                "invisible w-6 h-6 bg-primary text-primary-foreground border-2 -translate-x-1/2 -translate-y-full group-hover:translate-y-0 left-1/2 flex justify-center items-center",
-                !connectionInProgress && "group-hover:visible"
-              )}
-            >
-              +
-            </Handle>
-          </div>
-        </div>
+        />
+
         <div className="relative w-full h-full">Notes</div>
       </div>
     </div>

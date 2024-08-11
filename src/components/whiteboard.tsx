@@ -10,51 +10,48 @@ import {
   Edge,
   useReactFlow,
   ReactFlowProvider,
+  Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import StickyNote from "./cards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
 import NotesIconsMenu from "./notesIconsMenu";
 import { v4 as uuidV4 } from "uuid";
+import CharacterCard from "./cards/character";
+import LocationCard from "./cards/location";
+import ChoicesCard from "./cards/choices";
+import EventCard from "./cards/event";
+import MediaCard from "./cards/media";
+import {
+  loadNodesFromLocalStorage,
+  saveNodesToLocalStorage,
+} from "@/lib/utils";
 
-const nodeTypes = { stickyNote: StickyNote };
+const nodeTypes = {
+  stickyNote: StickyNote,
+  character: CharacterCard,
+  location: LocationCard,
+  event: EventCard,
+  choices: ChoicesCard,
+  media: MediaCard,
+};
 const edgeTypes = {
   floating: FloatingEdge,
 };
 
-const initialNodes = [
-  {
-    id: "1",
-    type: "stickyNote",
-    data: { label: "Note 1" },
-    position: { x: 0, y: 0 },
-  },
-  {
-    id: "2",
-    type: "stickyNote",
-    data: { label: "Note 2" },
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: "3",
-    type: "stickyNote",
-    data: { label: "Note 1" },
-    position: { x: 200, y: 200 },
-  },
-  {
-    id: "4",
-    type: "stickyNote",
-    data: { label: "Note 2" },
-    position: { x: 300, y: 300 },
-  },
-];
-
 function WhiteBoard() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
+    loadNodesFromLocalStorage()
+  );
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    saveNodesToLocalStorage(nodes);
+  }, [nodes]);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -100,11 +97,14 @@ function WhiteBoard() {
       ),
     [setEdges]
   );
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="w-full h-full relative">
-      <div className="reactflow-wrapper h-full w-full" ref={reactFlowWrapper}>
+    <div className="w-full h-full relative flex">
+      <div className="w-48 h-full border-r bg-background">navigation</div>
+      <div
+        className="reactflow-wrapper h-full flex-grow"
+        ref={reactFlowWrapper}
+      >
         <ReactFlow
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
@@ -116,6 +116,7 @@ function WhiteBoard() {
           onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
+          onDragEnd={(e) => console.log(e)}
         >
           <Background variant={BackgroundVariant.Dots} />
           <Controls />

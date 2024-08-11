@@ -140,3 +140,15 @@ export function createNodesAndEdges() {
 export const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
 };
+
+export const saveNodesToLocalStorage = (nodes: Node[]) => {
+  localStorage.setItem("reactFlowNodes", JSON.stringify(nodes));
+};
+
+export const loadNodesFromLocalStorage = () => {
+  const savedNodes = localStorage.getItem("reactFlowNodes");
+  if (savedNodes) {
+    return JSON.parse(savedNodes);
+  }
+  return [];
+};

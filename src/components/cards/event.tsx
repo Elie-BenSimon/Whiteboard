@@ -2,9 +2,9 @@ import { NodeProps } from "@xyflow/react";
 import React from "react";
 import BaseCard from "./baseCard";
 
-const EventCard: React.FC<NodeProps> = ({ id }) => {
+const EventCard: React.FC<NodeProps> = (props) => {
   return (
-    <BaseCard id={id} color="rgb(254 226 226)">
+    <BaseCard {...props} color="rgb(254 226 226)">
       event
     </BaseCard>
   );

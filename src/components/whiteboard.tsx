@@ -11,9 +11,11 @@ import {
   useReactFlow,
   ReactFlowProvider,
   Node,
+  OnReconnect,
+  reconnectEdge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useEffect, useRef } from "react";
+import { DragEventHandler, useCallback, useEffect, useRef } from "react";
 import StickyNote from "./cards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
@@ -53,16 +55,18 @@ function WhiteBoard() {
     saveNodesToLocalStorage(nodes);
   }, [nodes]);
 
-  const onDragOver = useCallback((event) => {
+  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
   }, []);
 
-  const onDrop = useCallback(
+  const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData("application/reactflow");
+      const type = event.dataTransfer?.getData("application/reactflow");
 
       if (typeof type === "undefined" || !type) {
         return;
@@ -81,7 +85,7 @@ function WhiteBoard() {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition]
+    [screenToFlowPosition, setNodes]
   );
 
   const onConnect = useCallback(
@@ -95,6 +99,12 @@ function WhiteBoard() {
           eds
         )
       ),
+    [setEdges]
+  );
+
+  const onReconnect: OnReconnect<Edge> = useCallback(
+    (oldEdge, newConnection) =>
+      setEdges((els) => reconnectEdge(oldEdge, newConnection, els)),
     [setEdges]
   );
 
@@ -116,7 +126,7 @@ function WhiteBoard() {
           onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          onDragEnd={(e) => console.log(e)}
+          onReconnect={onReconnect}
         >
           <Background variant={BackgroundVariant.Dots} />
           <Controls />

@@ -2,9 +2,9 @@ import { NodeProps } from "@xyflow/react";
 import React from "react";
 import BaseCard from "./baseCard";
 
-const ChoicesCard: React.FC<NodeProps> = ({ id }) => {
+const ChoicesCard: React.FC<NodeProps> = (props) => {
   return (
-    <BaseCard id={id} color="rgb(204 251 241)">
+    <BaseCard {...props} color="rgb(204 251 241)">
       choices
     </BaseCard>
   );

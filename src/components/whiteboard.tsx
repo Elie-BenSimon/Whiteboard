@@ -34,6 +34,7 @@ import ChoicesCard from "./cards/choices";
 import EventCard from "./cards/event";
 import MediaCard from "./cards/media";
 import {
+  cn,
   deleteNodesFromLocalStorage,
   loadNodesFromLocalStorage,
   saveNodesToLocalStorage,
@@ -63,6 +64,7 @@ function WhiteBoard() {
   const [listNodes, setListNodes] = useState<Node[]>(
     loadNodesFromLocalStorage("reactFlowNodesList")
   );
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const drawerWidth = 200;
 
   useEffect(() => {
@@ -148,29 +150,10 @@ function WhiteBoard() {
   const typesList = Object.keys(nodeTypes);
 
   return (
-    <div className="relative w-full h-full flex">
-      <div
-        className="absolute z-10 group h-full"
-        style={{ width: drawerWidth }}
-      >
-        <div
-          className=" bg-blue-500 h-full border-r -translate-x-full group-hover:translate-x-0 transition-transform"
-          style={{ width: drawerWidth }}
-        >
-          {typesList.map((type) => (
-            <div className="flex flex-col gap-2 p-1">
-              <div className="text-lg font-semibold">{type}</div>
-              {listNodes
-                .filter((node) => node.type === type)
-                .map((node) => (
-                  <div key={node.id} className="">
-                    {String(node.data.title)}
-                  </div>
-                ))}
-            </div>
-          ))}
-        </div>
-      </div>
+    <div
+      className="relative w-full h-full flex"
+      onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
+    >
       <div className="reactflow-wrapper h-full w-full" ref={reactFlowWrapper}>
         <ReactFlow
           nodeTypes={nodeTypes}
@@ -186,9 +169,29 @@ function WhiteBoard() {
           onReconnect={onReconnect}
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
+          onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
         >
+          <div
+            className={cn(
+              "bg-accent h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
+              mousePosition.x < drawerWidth + 80 && "translate-x-0",
+              !draggedNodes.length && "relative z-20"
+            )}
+            style={{ width: drawerWidth }}
+          >
+            {typesList.map((type) => (
+              <div className="flex flex-col gap-0.5 pb-4 border rounded p-2 bg-card">
+                <div className="text-lg font-semibold">{type}</div>
+                {listNodes
+                  .filter((node) => node.type === type)
+                  .map((node) => (
+                    <div key={node.id}>{String(node.data.title)}</div>
+                  ))}
+              </div>
+            ))}
+          </div>
           <Background variant={BackgroundVariant.Dots} />
-          <Controls />
+          <Controls position="bottom-right" />
         </ReactFlow>
       </div>
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">

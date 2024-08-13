@@ -49,6 +49,15 @@ const nodeTypes = {
   media: MediaCard,
 };
 
+const typeColors = {
+  stickyNote: "rgb(254 249 195)",
+  character: "rgb(219 234 254)",
+  location: "rgb(220 252 231)",
+  event: "rgb(254 226 226)",
+  choices: "rgb(204 251 241)",
+  media: "rgb(237 233 254)",
+};
+
 const edgeTypes = {
   floating: FloatingEdge,
 };
@@ -147,7 +156,9 @@ function WhiteBoard() {
     [nodes]
   );
 
-  const typesList = Object.keys(nodeTypes);
+  const typesList: Array<keyof typeof nodeTypes> = Object.keys(
+    nodeTypes
+  ) as Array<keyof typeof nodeTypes>;
 
   return (
     <div
@@ -173,15 +184,18 @@ function WhiteBoard() {
         >
           <div
             className={cn(
-              "bg-accent h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
+              "bg-card h-full overflow-y-scroll border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
               mousePosition.x < drawerWidth + 80 && "translate-x-0",
               !draggedNodes.length && "relative z-20"
             )}
             style={{ width: drawerWidth }}
           >
             {typesList.map((type) => (
-              <div className="flex flex-col gap-0.5 pb-4 border rounded p-2 bg-card">
-                <div className="text-lg font-semibold">{type}</div>
+              <div
+                className="flex flex-col gap-0.5 pb-4 border-t border-white outline outline-1 outline-border rounded p-2 shadow"
+                style={{ backgroundColor: typeColors[type] }}
+              >
+                <div className="text-lg font-semibold underline">{type}</div>
                 {listNodes
                   .filter((node) => node.type === type)
                   .map((node) => (

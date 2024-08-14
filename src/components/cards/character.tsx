@@ -6,6 +6,7 @@ import Tag, { TagData } from "../ui/tag";
 import TagCombobox from "../ui/tagComboBox";
 import { getRandomColor200 } from "@/lib/utils";
 import { v4 as uuidV4 } from "uuid";
+import CardHeader from "../ui/cardHeader";
 
 type CharacterCardProps = {
   title: string;
@@ -42,6 +43,10 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => titleRef.current?.focus(), 10);
+  }, []);
 
   useEffect(() => {
     if (titleRef.current) {
@@ -85,7 +90,7 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
   return (
     <BaseCard {...props}>
       <div className="w-72 flex flex-col bg-background rounded overflow-hidden">
-        <div className="bg-blue-100 p-1 h-6 border-t border-white"></div>
+        <CardHeader color="bg-blue-100" />
         <div className="bg-blue-100/20 flex-grow">
           <div className="flex gap-2 p-2 h-full">
             <div className="h-full flex flex-col gap-1">

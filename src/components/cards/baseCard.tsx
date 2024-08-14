@@ -79,7 +79,7 @@ const BaseCard: React.FC<BaseCardProps & Node> = ({
       />
       <div
         className={cn(
-          "relative shadow rounded border transition-all ease-cubic",
+          "relative shadow rounded border transition-all ease-cubic outline outline-[#0c0c10]",
           selected
             ? "scale-[106%] hover:scale-[109%] shadow-scale-106 hover:shadow-scale-109"
             : "shadow-md-plus hover:scale-[103%] hover:shadow-scale-103 "

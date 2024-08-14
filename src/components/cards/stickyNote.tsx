@@ -2,6 +2,7 @@ import { Node, useReactFlow } from "@xyflow/react";
 import React, { useEffect, useRef, useState } from "react";
 import BaseCard from "./baseCard";
 import { cn } from "@/lib/utils";
+import CardHeader from "../ui/cardHeader";
 
 type StickyNoteProps = {
   title: string;
@@ -54,45 +55,47 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
 
   return (
     <BaseCard {...props}>
-      <div className="min-h-48 w-48 p-4 bg-yellow-100 flex flex-col items-center justify-center border-t border-white rounded">
-        <textarea
-          ref={titleRef}
-          className={cn(
-            "nodrag h-auto focus:outline-none text-center text-lg font-bold mb-2 bg-transparent w-full overflow-hidden resize-none",
-            !data.title.length && "border-b border-accent-foreground"
-          )}
-          value={data.title}
-          onChange={(e) => {
-            updateNode(id, { data: { ...data, title: e.target.value } });
-          }}
-          onKeyDown={handleTitleSubmit}
-          rows={1}
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            target.style.height = "auto";
-            target.style.height = `${target.scrollHeight}px`;
-          }}
-        />
-
-        {isDescriptionEditable && (
+      <div className="bg-background">
+        <CardHeader color="bg-yellow-100" />
+        <div className="min-h-[168px] w-48 p-4 bg-yellow-100/30 flex flex-col items-center justify-center border-t border-white rounded">
           <textarea
-            ref={textareaRef}
-            className="nodrag h-auto focus:outline-none text-center resize-none overflow-hidden w-full bg-transparent"
-            value={data.description || ""}
+            ref={titleRef}
+            className={cn(
+              "nodrag h-auto focus:outline-none text-center text-lg font-bold mb-2 bg-transparent w-full overflow-hidden resize-none",
+              !data.title.length && "border-b border-accent-foreground"
+            )}
+            value={data.title}
             onChange={(e) => {
-              updateNode(id, {
-                data: { ...data, description: e.target.value },
-              });
+              updateNode(id, { data: { ...data, title: e.target.value } });
             }}
+            onKeyDown={handleTitleSubmit}
             rows={1}
-            onKeyDown={handleReturnInEmptyTextarea}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
             }}
           />
-        )}
+          {isDescriptionEditable && (
+            <textarea
+              ref={textareaRef}
+              className="nodrag h-auto focus:outline-none text-center resize-none overflow-hidden w-full bg-transparent"
+              value={data.description || ""}
+              onChange={(e) => {
+                updateNode(id, {
+                  data: { ...data, description: e.target.value },
+                });
+              }}
+              rows={1}
+              onKeyDown={handleReturnInEmptyTextarea}
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto";
+                target.style.height = `${target.scrollHeight}px`;
+              }}
+            />
+          )}
+        </div>
       </div>
     </BaseCard>
   );

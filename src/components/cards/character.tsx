@@ -17,8 +17,10 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
   const { id, data } = props;
   const { title, description, tagsList } = data;
   const [image, setImage] = useState<string | null>(null);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { updateNode } = useReactFlow();
+
   const [tagTypes, setTagTypes] = useState<TagData[]>([
     { id: "gentil", title: "Gentil", color: "bg-blue-200" },
     { id: "malin", title: "Malin", color: "bg-red-200" },
@@ -42,11 +44,20 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
   };
 
   useEffect(() => {
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = "auto";
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    if (titleRef.current) {
+      titleRef.current.style.height = "auto";
+      titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
     }
   }, [title]);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.height = `${
+        textAreaRef.current.scrollHeight + 4
+      }px`;
+    }
+  }, [data.description, data.tagsList]);
 
   const addTag = (tagId: string) => {
     const existingTag = tagTypes.find((tag) => tag.id === tagId);
@@ -118,7 +129,7 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
                 </label>
                 <textarea
                   id="name"
-                  ref={textAreaRef}
+                  ref={titleRef}
                   value={title}
                   onChange={(e) => {
                     updateNode(id, {
@@ -138,6 +149,7 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
                 </label>
                 <textarea
                   id="description"
+                  ref={textAreaRef}
                   value={description}
                   onChange={(e) => {
                     updateNode(id, {
@@ -145,6 +157,11 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
                     });
                   }}
                   className="w-full border-b focus:outline-none p-1 resize-none rounded-sm text-xs flex-grow"
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = "auto";
+                    target.style.height = `${target.scrollHeight}px`;
+                  }}
                 />
               </div>
             </div>

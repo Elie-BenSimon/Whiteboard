@@ -79,8 +79,10 @@ const BaseCard: React.FC<BaseCardProps & Node> = ({
       />
       <div
         className={cn(
-          "relative shadow rounded border transition-all duration-75",
-          selected && "shadow-lg scale-105"
+          "relative shadow rounded border transition-all ease-cubic",
+          selected
+            ? "scale-[106%] hover:scale-[109%] shadow-scale-106 hover:shadow-scale-109"
+            : "shadow-md-plus hover:scale-[103%] hover:shadow-scale-103 "
         )}
       >
         <Handle

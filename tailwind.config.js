@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -57,6 +57,14 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        "scale-103":
+          "0 3px 5px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "scale-106":
+          "0 4px 10px -1px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)",
+        "scale-109":
+          "0 6px 12px -1px rgb(0 0 0 / 0.06), 0 5px 7px -5px rgb(0 0 0 / 0.06)", 
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -71,7 +79,10 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      transitionTimingFunction: {
+        "cubic": "cubic-bezier(.65,.05,.36,1)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

@@ -17,7 +17,6 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize for the textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -67,7 +66,6 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
             updateNode(id, { data: { ...data, title: e.target.value } });
           }}
           onKeyDown={handleTitleSubmit}
-          maxLength={45}
           rows={1}
           onInput={(e) => {
             const target = e.target as HTMLTextAreaElement;
@@ -93,7 +91,6 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
             }}
-            maxLength={300}
           />
         )}
       </div>

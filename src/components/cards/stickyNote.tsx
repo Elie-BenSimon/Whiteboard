@@ -55,7 +55,7 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
 
   return (
     <BaseCard {...props}>
-      <div className="min-h-48 w-48 p-4 bg-yellow-100 flex flex-col items-center justify-center">
+      <div className="min-h-48 w-48 p-4 bg-yellow-100 flex flex-col items-center justify-center border-t border-white rounded">
         <textarea
           ref={titleRef}
           className={cn(

@@ -188,6 +188,7 @@ function WhiteBoard() {
           onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
           zoomOnDoubleClick={false}
           minZoom={0.1}
+          disableKeyboardA11y
         >
           <div
             className={cn(

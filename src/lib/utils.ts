@@ -163,3 +163,19 @@ export const deleteNodesFromLocalStorage = (
     }
   }
 };
+export const getRandomColor200 = () => {
+  const colors = [
+    "bg-red-200",
+    "bg-blue-200",
+    "bg-green-200",
+    "bg-yellow-200",
+    "bg-purple-200",
+    "bg-pink-200",
+    "bg-indigo-200",
+    "bg-teal-200",
+    "bg-cyan-200",
+  ];
+  const index = Math.floor(Math.random() * colors.length);
+
+  return colors[index];
+};

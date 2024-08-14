@@ -57,7 +57,7 @@ const BaseCard: React.FC<BaseCardProps & Node> = ({
     <div className="relative group p-6 z-10" onMouseMove={handleMouseMove}>
       {!connectionInProgress && (
         <button
-          className="hidden absolute bg-blue-500 text-white group-hover:flex items-center justify-center rounded-full"
+          className="opacity-0 absolute bg-blue-500 text-white group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full"
           style={{
             top: position.top,
             left: position.left,
@@ -65,7 +65,7 @@ const BaseCard: React.FC<BaseCardProps & Node> = ({
             height: buttonSize,
           }}
         >
-          <Icon name="Cable" size={18} />
+          <Icon name="Plus" size={18} />
         </button>
       )}
       <Handle

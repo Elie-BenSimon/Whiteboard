@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
   Handle,
-  NodeProps,
+  Node,
   Position,
   useConnection,
   useViewport,
@@ -11,13 +11,11 @@ import Icon from "../ui/icon";
 
 type BaseCardProps = {
   children: React.ReactNode;
-  color?: string;
 };
 
-const BaseCard: React.FC<BaseCardProps & NodeProps> = ({
+const BaseCard: React.FC<BaseCardProps & Node> = ({
   id,
   children,
-  color,
   selected,
 }) => {
   const connection = useConnection();
@@ -81,10 +79,9 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = ({
       />
       <div
         className={cn(
-          "relative w-32 h-32 shadow rounded border transition-all",
+          "relative shadow rounded border transition-all duration-75",
           selected && "shadow-lg scale-105"
         )}
-        style={{ backgroundColor: color || "bg-yellow-100" }}
       >
         <Handle
           id="target"
@@ -95,7 +92,7 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = ({
             connectionInProgress && "z-10"
           )}
         />
-        <div className="relative w-full h-full">{children}</div>
+        <div className="relative w-fit h-full">{children}</div>
       </div>
     </div>
   );

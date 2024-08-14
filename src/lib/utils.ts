@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-import { Position, Node, XYPosition, Edge, InternalNode } from "@xyflow/react";
+import { Position, Node, XYPosition, InternalNode } from "@xyflow/react";
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
@@ -105,32 +105,6 @@ export function getEdgeParams(
     sourcePos,
     targetPos,
   };
-}
-
-export function createNodesAndEdges(): { nodes: Node[]; edges: Edge[] } {
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
-  const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-  nodes.push({ id: "target", data: { label: "Target" }, position: center });
-
-  for (let i = 0; i < 8; i++) {
-    const degrees = i * (360 / 8);
-    const radians = degrees * (Math.PI / 180);
-    const x = 250 * Math.cos(radians) + center.x;
-    const y = 250 * Math.sin(radians) + center.y;
-
-    nodes.push({ id: `${i}`, data: { label: "Source" }, position: { x, y } });
-
-    edges.push({
-      id: `edge-${i}`,
-      target: "target",
-      source: `${i}`,
-      type: "floating",
-    });
-  }
-
-  return { nodes, edges };
 }
 
 export const clamp = (value: number, min: number, max: number): number => {

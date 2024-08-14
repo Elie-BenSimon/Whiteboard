@@ -14,6 +14,7 @@ import {
   OnReconnect,
   reconnectEdge,
   OnNodeDrag,
+  NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
@@ -107,7 +108,7 @@ function WhiteBoard() {
         id: uuidV4(),
         type,
         position,
-        data: { title: `${type}` },
+        data: { title: "" },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -167,7 +168,7 @@ function WhiteBoard() {
     >
       <div className="reactflow-wrapper h-full w-full" ref={reactFlowWrapper}>
         <ReactFlow
-          nodeTypes={nodeTypes}
+          nodeTypes={nodeTypes as unknown as NodeTypes}
           edgeTypes={edgeTypes}
           connectionLineComponent={FloatingConnectionLine}
           nodes={nodes}
@@ -181,6 +182,8 @@ function WhiteBoard() {
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
           onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
+          zoomOnDoubleClick={false}
+          minZoom={0.1}
         >
           <div
             className={cn(
@@ -199,7 +202,9 @@ function WhiteBoard() {
                 {listNodes
                   .filter((node) => node.type === type)
                   .map((node) => (
-                    <div key={node.id}>{String(node.data.title)}</div>
+                    <div className="truncate" key={node.id}>
+                      {String(node.data.title)}
+                    </div>
                   ))}
               </div>
             ))}

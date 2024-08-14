@@ -139,7 +139,11 @@ function WhiteBoard() {
   const onNodeDragStop: OnNodeDrag = useCallback(
     (event) => {
       if (event.clientX < drawerWidth + 80) {
-        deleteElements({ nodes: draggedNodes }).then(({ deletedNodes }) => {
+        const nodesToDelete = draggedNodes.filter(
+          (node) =>
+            typeof node.data.title === "string" && node.data.title.length > 0
+        );
+        deleteElements({ nodes: nodesToDelete }).then(({ deletedNodes }) => {
           setDraggedNodes([]);
           deleteNodesFromLocalStorage(deletedNodes, "reactFlowNodes");
           setListNodes((prevNodes) => [...prevNodes, ...deletedNodes]);

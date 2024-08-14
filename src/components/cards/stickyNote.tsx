@@ -11,11 +11,10 @@ type StickyNoteProps = {
 const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
   const { id, data } = props;
   const { updateNode } = useReactFlow();
-  const [isEditingTitle, setIsEditingTitle] = useState(true);
   const [isDescriptionEditable, setIsDescriptionEditable] = useState(
     !!data.description
   );
-  const inputRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-resize for the textarea
@@ -27,14 +26,13 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
   }, [data.description]);
 
   useEffect(() => {
-    if (inputRef.current && isEditingTitle) {
-      setTimeout(() => inputRef.current?.focus(), 10);
-    }
-  }, [isEditingTitle]);
+    setTimeout(() => titleRef.current?.focus(), 10);
+  }, []);
 
-  const handleTitleSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleTitleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (data.title.length && e.key === "Enter") {
-      setIsEditingTitle(false);
+      e.preventDefault();
+      e.currentTarget.blur();
       setIsDescriptionEditable(true);
       setTimeout(() => {
         if (textareaRef.current && !textareaRef.current.value) {
@@ -44,18 +42,13 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
     }
   };
 
-  const handleTitleClick = () => {
-    setIsEditingTitle(true);
-  };
-
   const handleReturnInEmptyTextarea = (
     e: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     if (e.key === "Backspace" && !data.description) {
       setIsDescriptionEditable(false);
-      setIsEditingTitle(true);
-      if (inputRef.current) {
-        inputRef.current.focus();
+      if (titleRef.current) {
+        titleRef.current.focus();
       }
     }
   };
@@ -63,31 +56,26 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
   return (
     <BaseCard {...props}>
       <div className="min-h-48 w-48 p-4 bg-yellow-100 flex flex-col items-center justify-center">
-        {isEditingTitle ? (
-          <input
-            ref={inputRef}
-            className={cn(
-              "nodrag h-auto focus:outline-none text-center text-lg font-bold mb-2 bg-transparent w-full overflow-hidden",
-              !data.title.length && "border-b border-accent-foreground"
-            )}
-            value={data.title}
-            onChange={(e) => {
-              updateNode(id, { data: { ...data, title: e.target.value } });
-            }}
-            onKeyDown={handleTitleSubmit}
-            maxLength={30}
-            onBlur={() => {
-              if (data.title.length) setIsEditingTitle(false);
-            }}
-          />
-        ) : (
-          <div
-            className="w-full text-center text-lg font-bold mb-2 cursor-text overflow-hidden truncate"
-            onClick={handleTitleClick}
-          >
-            {data.title}
-          </div>
-        )}
+        <textarea
+          ref={titleRef}
+          className={cn(
+            "nodrag h-auto focus:outline-none text-center text-lg font-bold mb-2 bg-transparent w-full overflow-hidden resize-none",
+            !data.title.length && "border-b border-accent-foreground"
+          )}
+          value={data.title}
+          onChange={(e) => {
+            updateNode(id, { data: { ...data, title: e.target.value } });
+          }}
+          onKeyDown={handleTitleSubmit}
+          maxLength={45}
+          rows={1}
+          onInput={(e) => {
+            const target = e.target as HTMLTextAreaElement;
+            target.style.height = "auto";
+            target.style.height = `${target.scrollHeight}px`;
+          }}
+        />
+
         {isDescriptionEditable && (
           <textarea
             ref={textareaRef}

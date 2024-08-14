@@ -2,7 +2,10 @@ import { Node } from "@xyflow/react";
 import React from "react";
 import BaseCard from "./baseCard";
 
-const ChoicesCard: React.FC<Node> = (props) => {
+type ChoicesCardProps = {
+  title: string;
+};
+const ChoicesCard: React.FC<Node<ChoicesCardProps>> = (props) => {
   return <BaseCard {...props}>choices</BaseCard>;
 };
 

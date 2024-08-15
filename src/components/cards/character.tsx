@@ -12,12 +12,13 @@ type CharacterCardProps = {
   title: string;
   description?: string;
   tagsList?: TagData[];
+  image?: string;
 };
 
 const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
   const { id, data } = props;
-  const { title, description, tagsList } = data;
-  const [image, setImage] = useState<string | null>(null);
+  const { title, description, tagsList, image: characterImage } = data;
+  const [image, setImage] = useState<string | null>(characterImage ?? null);
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { updateNode } = useReactFlow();
@@ -39,6 +40,9 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
         setImage(ev.target?.result as string);
+        updateNode(id, {
+          data: { ...data, image: ev.target?.result as string },
+        });
       };
       reader.readAsDataURL(e.target.files[0]);
     }

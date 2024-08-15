@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 import { Position, Node, XYPosition, InternalNode } from "@xyflow/react";
+import { Value } from "node_modules/react-calendar/dist/esm/shared/types";
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
@@ -178,4 +179,31 @@ export const getRandomColor200 = () => {
   const index = Math.floor(Math.random() * colors.length);
 
   return colors[index];
+};
+
+export const getDateParts = (date?: Value | string) => {
+  let parsedDate: Date | undefined;
+
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (typeof date === "string") {
+    parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      parsedDate = undefined;
+    }
+  }
+
+  if (parsedDate) {
+    const optionsDay = { weekday: "long" } as const;
+    const optionsMonth = { month: "long" } as const;
+
+    const dayNumber = parsedDate.getDate();
+    const dayName = parsedDate.toLocaleDateString("fr-FR", optionsDay);
+    const monthName = parsedDate.toLocaleDateString("fr-FR", optionsMonth);
+    const year = parsedDate.getFullYear();
+
+    return { dayNumber, dayName, monthName, year };
+  }
+
+  return { dayNumber: "", dayName: "", monthName: "", year: "" };
 };

@@ -98,7 +98,7 @@ const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
         <div className="bg-blue-100/20 flex-grow">
           <div className="flex gap-2 p-2 h-full">
             <div className="h-full flex flex-col gap-1">
-              <div className="relative w-28 h-28 rounded-lg border-2 bg-card overflow-hidden flex-shrink-0 shadow">
+              <div className="relative w-28 h-28 rounded-lg border-2 border-white bg-card overflow-hidden flex-shrink-0 shadow">
                 {image ? (
                   <img
                     src={image}

@@ -50,7 +50,7 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -58,11 +58,11 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        "scale-103":
+        "card-hover":
           "0 3px 5px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-        "scale-106":
+        "card-selected":
           "0 4px 10px -1px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)",
-        "scale-109":
+        "card-selected-hover":
           "0 6px 12px -1px rgb(0 0 0 / 0.06), 0 5px 7px -5px rgb(0 0 0 / 0.06)", 
       },
       keyframes: {
@@ -74,14 +74,21 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        'border-dance': {
+          '0%': {},
+          '100%': {
+            'background-position': 'var(--bd-speed) 0, 0 100%, 0 0, 100% var(--bd-speed)',
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'border-dance': 'border-dance 10s infinite linear',
       },
       transitionTimingFunction: {
         "cubic": "cubic-bezier(.65,.05,.36,1)",
-      },
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

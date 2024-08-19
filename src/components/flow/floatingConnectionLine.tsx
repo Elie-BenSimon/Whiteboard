@@ -1,4 +1,4 @@
-import { getEdgeParams } from "@/lib/utils";
+import { getEdgeParams } from "@/lib/flowUtils";
 import {
   ConnectionLineComponentProps,
   getBezierPath,
@@ -33,12 +33,15 @@ function FloatingConnectionLine({
     },
   };
 
-  const { sx, sy, sourcePos, targetPos } = getEdgeParams(fromNode, targetNode);
+  const { sx, sy, sourcePosition, targetPosition } = getEdgeParams(
+    fromNode,
+    targetNode
+  );
   const [edgePath] = getBezierPath({
     sourceX: sx,
     sourceY: sy,
-    sourcePosition: sourcePos,
-    targetPosition: targetPos,
+    sourcePosition,
+    targetPosition,
     targetX: toX,
     targetY: toY,
   });

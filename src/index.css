@@ -29,6 +29,12 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    --bd-gap-and-dash-length: 15px;
+    --bd-border-width: 2px;
+    --bd-border-color: rgb(16, 16, 33);
+    --bd-dash-percent: 70%;
+    --bd-speed: 300px;
   }
 
   .dark {
@@ -66,5 +72,37 @@
   body {
     @apply bg-background text-foreground;
     font-family: "DM Sans", sans-serif;
+  }
+}
+
+@layer components {
+  .border-dance {
+    background: linear-gradient(
+        90deg,
+        var(--bd-border-color) var(--bd-dash-percent),
+        transparent calc(100% - var(--bd-dash-percent))
+      ),
+      linear-gradient(
+        90deg,
+        var(--bd-border-color) var(--bd-dash-percent),
+        transparent calc(100% - var(--bd-dash-percent))
+      ),
+      linear-gradient(
+        0deg,
+        var(--bd-border-color) var(--bd-dash-percent),
+        transparent calc(100% - var(--bd-dash-percent))
+      ),
+      linear-gradient(
+        0deg,
+        var(--bd-border-color) var(--bd-dash-percent),
+        transparent calc(100% - var(--bd-dash-percent))
+      );
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: var(--bd-gap-and-dash-length) var(--bd-border-width),
+      var(--bd-gap-and-dash-length) var(--bd-border-width),
+      var(--bd-border-width) var(--bd-gap-and-dash-length),
+      var(--bd-border-width) var(--bd-gap-and-dash-length);
+    background-position: 0 0, var(--bd-speed) 100%, 0 var(--bd-speed), 100% 0;
+    animation: border-dance 10s infinite linear;
   }
 }

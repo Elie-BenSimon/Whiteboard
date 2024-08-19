@@ -1,45 +1,39 @@
+import React, { useCallback, useState } from "react";
 import {
   ReactFlow,
   Controls,
   Background,
   BackgroundVariant,
-  useEdgesState,
-  useNodesState,
-  addEdge,
-  Connection,
-  Edge,
   useReactFlow,
   ReactFlowProvider,
-  Node,
-  OnReconnect,
-  reconnectEdge,
-  OnNodeDrag,
   NodeTypes,
+  Node,
+  OnNodeDrag,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import {
-  DragEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
 import StickyNote from "./cards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
 import NotesIconsMenu from "./notesIconsMenu";
-import { v4 as uuidV4 } from "uuid";
 import CharacterCard from "./cards/character";
 import LocationCard from "./cards/location";
 import ChoicesCard from "./cards/choices";
 import EventCard from "./cards/event";
 import MediaCard from "./cards/media";
 import {
+  useWhiteBoardContext,
+  WhiteBoardProvider,
+} from "../contexts/whiteboardContext";
+import {
   cn,
-  deleteNodesFromLocalStorage,
   loadNodesFromLocalStorage,
   saveNodesToLocalStorage,
+  deleteNodesFromLocalStorage,
 } from "@/lib/utils";
+import TempConnectionLine from "./flow/tempConnection";
+import { Button } from "./ui/button";
+import Icon from "./ui/icon";
+import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -64,81 +58,63 @@ const edgeTypes = {
 };
 
 function WhiteBoard() {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
-    loadNodesFromLocalStorage("reactFlowNodes")
-  );
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const {
+    nodes,
+    edges,
+    linkMode,
+    mousePosition,
+    sourceNode,
+    setLinkMode,
+    onConnect,
+    onReconnect,
+    addNewNode,
+    onNodesChange,
+    onEdgesChange,
+    setMousePosition,
+    setSourceNode,
+  } = useWhiteBoardContext();
   const { screenToFlowPosition, getZoom, deleteElements } = useReactFlow();
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
   const [listNodes, setListNodes] = useState<Node[]>(
     loadNodesFromLocalStorage("reactFlowNodesList")
   );
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const drawerWidth = 200;
 
-  useEffect(() => {
-    saveNodesToLocalStorage(nodes, "reactFlowNodes");
-  }, [nodes]);
-
-  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = "move";
-    }
-  }, []);
-
-  const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
+  const onDragOver: React.DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       event.preventDefault();
-
-      const type = event.dataTransfer?.getData("application/reactflow");
-
-      if (typeof type === "undefined" || !type) {
-        return;
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
       }
+    },
+    []
+  );
 
+  const onDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      event.preventDefault();
+      const type = event.dataTransfer?.getData("application/reactflow");
+      if (!type) return;
       const zoom = getZoom();
-
       const position = screenToFlowPosition({
         x: event.clientX - 86 * zoom,
         y: event.clientY - 20 * zoom,
       });
-      const newNode = {
-        id: uuidV4(),
-        type,
-        position,
-        data: { title: "" },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
+      addNewNode(type, position);
     },
-    [getZoom, screenToFlowPosition, setNodes]
+    [getZoom, screenToFlowPosition, addNewNode]
   );
 
-  const onConnect = useCallback(
-    (params: Connection) =>
-      setEdges((eds: Edge[]) =>
-        addEdge(
-          {
-            ...params,
-            type: "floating",
-          },
-          eds
-        )
-      ),
-    [setEdges]
-  );
-
-  const onReconnect: OnReconnect<Edge> = useCallback(
-    (oldEdge, newConnection) =>
-      setEdges((els) => reconnectEdge(oldEdge, newConnection, els)),
-    [setEdges]
+  const onNodeDragStart: OnNodeDrag = useCallback(
+    (_, node) => {
+      setSourceNode(null);
+      setDraggedNodes([...nodes.filter((node) => node.selected), node]);
+    },
+    [nodes, setSourceNode]
   );
 
   const onNodeDragStop: OnNodeDrag = useCallback(
     (event) => {
-      if (event.clientX < drawerWidth + 80) {
+      if (event.clientX < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
         const nodesToDelete = draggedNodes.filter(
           (node) =>
             typeof node.data.title === "string" && node.data.title.length > 0
@@ -154,23 +130,13 @@ function WhiteBoard() {
     [deleteElements, draggedNodes, nodes]
   );
 
-  const onNodeDragStart: OnNodeDrag = useCallback(
-    (_, node) => {
-      setDraggedNodes([...nodes.filter((node) => node.selected), node]);
-    },
-    [nodes]
-  );
-
   const typesList: Array<keyof typeof nodeTypes> = Object.keys(
     nodeTypes
   ) as Array<keyof typeof nodeTypes>;
 
   return (
-    <div
-      className="relative w-full h-full flex"
-      onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
-    >
-      <div className="reactflow-wrapper h-full w-full" ref={reactFlowWrapper}>
+    <div className="relative w-full h-full flex">
+      <div className="reactflow-wrapper h-full w-full">
         <ReactFlow
           nodeTypes={nodeTypes as unknown as NodeTypes}
           edgeTypes={edgeTypes}
@@ -186,6 +152,12 @@ function WhiteBoard() {
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
           onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
+          onMouseMove={(e) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+          }}
+          onClick={() => {
+            if (sourceNode) setSourceNode(null);
+          }}
           zoomOnDoubleClick={false}
           minZoom={0.1}
           disableKeyboardA11y
@@ -193,10 +165,11 @@ function WhiteBoard() {
           <div
             className={cn(
               "bg-card h-full overflow-y-scroll border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
-              mousePosition.x < drawerWidth + 80 && "translate-x-0",
+              mousePosition.x < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN &&
+                "translate-x-0",
               !draggedNodes.length && "relative z-20"
             )}
-            style={{ width: drawerWidth }}
+            style={{ width: DRAWER_WIDTH }}
           >
             {typesList.map((type) => (
               <div
@@ -216,10 +189,22 @@ function WhiteBoard() {
           </div>
           <Background variant={BackgroundVariant.Dots} />
           <Controls position="bottom-right" />
+          {sourceNode && <TempConnectionLine />}
         </ReactFlow>
       </div>
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">
         <NotesIconsMenu />
+        <div className="absolute -left-2 -translate-x-full">
+          <Button
+            className="rounded-full p-0 w-10"
+            onClick={() => {
+              setLinkMode((prev) => !prev);
+              setSourceNode(null);
+            }}
+          >
+            <Icon name={linkMode ? "Link2" : "Link2Off"} />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -227,7 +212,9 @@ function WhiteBoard() {
 
 const WhiteBoardAppWrapper = () => (
   <ReactFlowProvider>
-    <WhiteBoard />
+    <WhiteBoardProvider>
+      <WhiteBoard />
+    </WhiteBoardProvider>
   </ReactFlowProvider>
 );
 

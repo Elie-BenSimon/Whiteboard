@@ -1,4 +1,4 @@
-import { Node, useReactFlow } from "@xyflow/react";
+import { NodeProps, useReactFlow } from "@xyflow/react";
 import React, { useEffect, useRef, useState } from "react";
 import BaseCard from "./baseCard";
 import { cn } from "@/lib/utils";
@@ -9,8 +9,9 @@ type StickyNoteProps = {
   description?: string;
 };
 
-const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
+const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
   const { id, data } = props;
+  const { title, description } = data as StickyNoteProps;
   const { updateNode } = useReactFlow();
   const [isDescriptionEditable, setIsDescriptionEditable] = useState(
     !!data.description
@@ -30,7 +31,7 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
   }, []);
 
   const handleTitleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (data.title.length && e.key === "Enter") {
+    if (title.length && e.key === "Enter") {
       e.preventDefault();
       e.currentTarget.blur();
       setIsDescriptionEditable(true);
@@ -62,9 +63,9 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
             ref={titleRef}
             className={cn(
               "nodrag h-auto focus:outline-none text-center text-lg font-bold mb-2 bg-transparent w-full overflow-hidden resize-none",
-              !data.title.length && "border-b border-accent-foreground"
+              !title.length && "border-b border-accent-foreground"
             )}
-            value={data.title}
+            value={title}
             onChange={(e) => {
               updateNode(id, { data: { ...data, title: e.target.value } });
             }}
@@ -80,7 +81,7 @@ const StickyNote: React.FC<Node<StickyNoteProps>> = (props) => {
             <textarea
               ref={textareaRef}
               className="nodrag h-auto focus:outline-none text-center resize-none overflow-hidden w-full bg-transparent"
-              value={data.description || ""}
+              value={description || ""}
               onChange={(e) => {
                 updateNode(id, {
                   data: { ...data, description: e.target.value },

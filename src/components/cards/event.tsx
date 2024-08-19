@@ -1,4 +1,4 @@
-import { Node, useReactFlow } from "@xyflow/react";
+import { NodeProps, useReactFlow } from "@xyflow/react";
 import React, { useEffect, useRef } from "react";
 import BaseCard from "./baseCard";
 import CardHeader from "../ui/cardHeader";
@@ -13,9 +13,9 @@ type EventCardProps = {
   date?: Value;
 };
 
-const EventCard: React.FC<Node<EventCardProps>> = (props) => {
+const EventCard: React.FC<NodeProps & EventCardProps> = (props) => {
   const { id, data } = props;
-  const { title, date } = data;
+  const { title, date } = data as EventCardProps;
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const { updateNode } = useReactFlow();
 

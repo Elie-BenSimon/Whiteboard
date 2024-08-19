@@ -39,7 +39,7 @@ const TagCombobox: React.FC<TagComboboxProps> = ({
           +
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0 prevent-source-node">
         <Command>
           <CommandInput
             value={value}

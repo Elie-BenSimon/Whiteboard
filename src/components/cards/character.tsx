@@ -1,4 +1,4 @@
-import { Node, useReactFlow } from "@xyflow/react";
+import { NodeProps, useReactFlow } from "@xyflow/react";
 import React, { useState, useRef, useEffect } from "react";
 import BaseCard from "./baseCard";
 import Icon from "../ui/icon";
@@ -15,9 +15,14 @@ type CharacterCardProps = {
   image?: string;
 };
 
-const CharacterCard: React.FC<Node<CharacterCardProps>> = (props) => {
+const CharacterCard: React.FC<NodeProps & CharacterCardProps> = (props) => {
   const { id, data } = props;
-  const { title, description, tagsList, image: characterImage } = data;
+  const {
+    title,
+    description,
+    tagsList,
+    image: characterImage,
+  } = data as CharacterCardProps;
   const [image, setImage] = useState<string | null>(characterImage ?? null);
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

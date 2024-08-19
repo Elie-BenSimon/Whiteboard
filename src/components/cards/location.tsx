@@ -1,4 +1,4 @@
-import { Node, useReactFlow } from "@xyflow/react";
+import { NodeProps, useReactFlow } from "@xyflow/react";
 import React, { useState, useRef, useEffect } from "react";
 import BaseCard from "./baseCard";
 import CardHeader from "../ui/cardHeader";
@@ -10,9 +10,13 @@ type LocationCardProps = {
   image?: string;
 };
 
-const LocationCard: React.FC<Node<LocationCardProps>> = (props) => {
+const LocationCard: React.FC<NodeProps & LocationCardProps> = (props) => {
   const { id, data } = props;
-  const { title, description, image: backgroundImage } = data;
+  const {
+    title,
+    description,
+    image: backgroundImage,
+  } = data as LocationCardProps;
   const { updateNode } = useReactFlow();
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);

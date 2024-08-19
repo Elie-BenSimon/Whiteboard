@@ -1,98 +1,69 @@
+import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
 import { cn } from "@/lib/utils";
-import {
-  Handle,
-  Node,
-  Position,
-  useConnection,
-  useViewport,
-} from "@xyflow/react";
-import React, { useState } from "react";
-import Icon from "../ui/icon";
+import { Handle, Position, NodeProps } from "@xyflow/react";
+import React from "react";
 
 type BaseCardProps = {
   children: React.ReactNode;
 };
 
-const BaseCard: React.FC<BaseCardProps & Node> = ({
-  id,
-  children,
-  selected,
-}) => {
-  const connection = useConnection();
-  const connectionInProgress = connection.inProgress;
-  const isTarget = connectionInProgress && connection.fromNode.id !== id;
-  const { zoom } = useViewport();
+const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
+  const { id, children, selected } = props;
+  const { onCardClick, sourceNode } = useWhiteBoardContext();
+  const isSourceNode = sourceNode?.id === id;
 
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const buttonSize = 24;
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    let targetElement = e.target as Element;
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const box = event.currentTarget.getBoundingClientRect();
-    const mouseX = (event.clientX - box.left) / zoom;
-    const mouseY = (event.clientY - box.top) / zoom;
+    if (sourceNode?.id === null) {
+      while (
+        targetElement &&
+        !["BUTTON", "INPUT", "TEXTAREA"].includes(targetElement.tagName) &&
+        !targetElement.classList.contains("prevent-source-node")
+      ) {
+        targetElement = targetElement.parentElement as Element;
+      }
 
-    let top = mouseY;
-    let left = mouseX;
-
-    if (mouseY < buttonSize) {
-      top = 0;
-    } else if (mouseY > box.height / zoom - buttonSize) {
-      top = box.height / zoom - buttonSize;
-    } else {
-      top = mouseY - buttonSize / 2;
+      if (
+        targetElement &&
+        (["BUTTON", "INPUT", "TEXTAREA"].includes(targetElement.tagName) ||
+          targetElement.classList.contains("prevent-source-node"))
+      ) {
+        return;
+      }
     }
 
-    if (mouseX < buttonSize) {
-      left = 0;
-    } else if (mouseX > box.width / zoom - buttonSize) {
-      left = box.width / zoom - buttonSize;
-    } else {
-      left = mouseX - buttonSize / 2;
-    }
-
-    setPosition({ top, left });
+    onCardClick(props);
   };
 
   return (
-    <div className="relative group p-6 z-10" onMouseMove={handleMouseMove}>
-      {!connectionInProgress && (
-        <button
-          className="opacity-0 absolute bg-blue-500 text-white group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full"
-          style={{
-            top: position.top,
-            left: position.left,
-            width: buttonSize,
-            height: buttonSize,
-          }}
-        >
-          <Icon name="Plus" size={18} />
-        </button>
+    <div
+      className={cn(
+        "rounded transition-transform p-1",
+        isSourceNode && "border-dance animate-border-dance",
+        selected ? "scale-[105%] hover:scale-[106%]" : "hover:scale-[101%]"
       )}
-      <Handle
-        id="source"
-        type="source"
-        position={Position.Bottom}
-        className={cn(
-          "!cursor-pointer bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0",
-          isTarget && "-z-10"
-        )}
-      />
+    >
       <div
         className={cn(
-          "relative shadow rounded border-2 border-[#17171f] transition-all ease-cubic",
+          "relative shadow rounded border-2 border-[#17171f] transition-all duration-75 ease-cubic",
           selected
-            ? "scale-[106%] hover:scale-[109%] shadow-scale-106 hover:shadow-scale-109"
-            : "shadow-md-plus hover:scale-[103%] hover:shadow-scale-103 "
+            ? "shadow-card-selected hover:shadow-card-selected-hover"
+            : "shadow-md-plus hover:shadow-card-hover"
         )}
+        onClick={handleCardClick}
       >
         <Handle
           id="target"
           type="target"
           position={Position.Top}
-          className={cn(
-            "bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0",
-            connectionInProgress && "z-10"
-          )}
+          className="bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0"
+        />
+        <Handle
+          id="source"
+          type="source"
+          position={Position.Bottom}
+          className="bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0"
         />
         <div className="relative w-fit h-full">{children}</div>
       </div>

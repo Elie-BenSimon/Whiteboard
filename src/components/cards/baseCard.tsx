@@ -13,9 +13,8 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
   const isSourceNode = sourceNode?.id === id;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    let targetElement = e.target as Element;
-
-    if (sourceNode?.id === null) {
+    if (sourceNode === null) {
+      let targetElement = e.target as Element;
       while (
         targetElement &&
         !["BUTTON", "INPUT", "TEXTAREA"].includes(targetElement.tagName) &&

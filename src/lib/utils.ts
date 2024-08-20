@@ -138,6 +138,20 @@ export const getRandomColor200 = () => {
   return colors[index];
 };
 
+export const edgeColors = {
+  indigo: "#4f46e5",
+  blue: "#3b82f6",
+  teal: "#319795",
+  cyan: "#06b6d4",
+  yellow: "#eab308",
+  orange: "#e3a008",
+  red: "#f05252",
+  gray: "#6b7280",
+  black: "#000",
+};
+
+export type EdgeColor = keyof typeof edgeColors;
+
 export const getDateParts = (date?: Value | string) => {
   let parsedDate: Date | undefined;
 

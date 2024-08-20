@@ -11,7 +11,7 @@ import { getEdgeParams } from "@/lib/flowUtils";
 
 const TempConnectionLine = () => {
   const { screenToFlowPosition } = useReactFlow();
-  const { mousePosition, sourceNode } = useWhiteBoardContext();
+  const { mousePosition, sourceNode, edgeColor } = useWhiteBoardContext();
 
   const flowMousePosition = screenToFlowPosition({
     x: mousePosition.x,
@@ -105,16 +105,17 @@ const TempConnectionLine = () => {
           width: Math.max(1, width),
           height: Math.max(1, height),
           position: "absolute",
+          stroke: edgeColor,
         }}
       >
         <path
-          className="stroke-gray-500 stroke-[4px] z-20"
+          className="stroke-[4px] z-20"
           d={edgePath}
           strokeWidth={4}
           fill="none"
         />
         <circle
-          className="stroke-gray-500 stroke-[4px] z-20"
+          className="stroke-[4px] z-20"
           cx={adjustedTargetX}
           cy={adjustedTargetY}
           r={6}

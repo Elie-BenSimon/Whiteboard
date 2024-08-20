@@ -1,6 +1,6 @@
-import Icon from "./ui/icon";
+import Icon from "../ui/icon";
 
-const NotesIconsMenu = () => {
+const CardsMenu = () => {
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
     nodeType: string
@@ -57,4 +57,4 @@ const NotesIconsMenu = () => {
   );
 };
 
-export default NotesIconsMenu;
+export default CardsMenu;

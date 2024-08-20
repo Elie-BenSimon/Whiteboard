@@ -14,7 +14,7 @@ import "@xyflow/react/dist/style.css";
 import StickyNote from "./cards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
-import NotesIconsMenu from "./notesIconsMenu";
+import CardsMenu from "./controls/cardsMenu";
 import CharacterCard from "./cards/character";
 import LocationCard from "./cards/location";
 import ChoicesCard from "./cards/choices";
@@ -31,10 +31,9 @@ import {
   deleteNodesFromLocalStorage,
 } from "@/lib/utils";
 import TempConnectionLine from "./flow/tempConnection";
-import { Button } from "./ui/button";
-import Icon from "./ui/icon";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
 import { v4 as uuidV4 } from "uuid";
+import EdgesMenu from "./controls/edgesMenu";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -62,10 +61,8 @@ function WhiteBoard() {
   const {
     nodes,
     edges,
-    linkMode,
     mousePosition,
     sourceNode,
-    setLinkMode,
     onConnect,
     onReconnect,
     onNodesChange,
@@ -202,17 +199,9 @@ function WhiteBoard() {
         </ReactFlow>
       </div>
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-        <NotesIconsMenu />
+        <CardsMenu />
         <div className="absolute -left-2 -translate-x-full">
-          <Button
-            className="rounded-full p-0 w-10"
-            onClick={() => {
-              setLinkMode((prev) => !prev);
-              setSourceNode(null);
-            }}
-          >
-            <Icon name={linkMode ? "Link2" : "Link2Off"} />
-          </Button>
+          <EdgesMenu />
         </div>
       </div>
     </div>

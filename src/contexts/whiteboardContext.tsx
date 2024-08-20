@@ -17,6 +17,7 @@ import { v4 as uuidV4 } from "uuid";
 import {
   deleteEdgesFromLocalStorage,
   deleteNodesFromLocalStorage,
+  edgeColors,
   loadEdgesFromLocalStorage,
   loadNodesFromLocalStorage,
   saveEdgesToLocalStorage,
@@ -29,6 +30,7 @@ interface WhiteBoardContextProps {
   linkMode: boolean;
   sourceNode: NodeProps | null;
   mousePosition: { x: number; y: number };
+  edgeColor: string;
   setLinkMode: React.Dispatch<React.SetStateAction<boolean>>;
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -39,6 +41,7 @@ interface WhiteBoardContextProps {
   onNodesChange: OnNodesChange<Node>;
   onEdgesChange: OnEdgesChange<Edge>;
   setSourceNode: React.Dispatch<React.SetStateAction<NodeProps | null>>;
+  setEdgeColor: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const WhiteBoardContext = createContext<WhiteBoardContextProps | undefined>(
@@ -57,6 +60,7 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
   const [linkMode, setLinkMode] = useState(true);
   const [sourceNode, setSourceNode] = useState<NodeProps | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [edgeColor, setEdgeColor] = useState<string>(edgeColors.red);
 
   const onCardClick = useCallback(
     (node: NodeProps) => {
@@ -69,6 +73,9 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
             type: "floating",
             sourceHandle: "source",
             targetHandle: "target",
+            style: {
+              stroke: edgeColor,
+            },
           };
           setEdges((eds) => addEdge(newEdge, eds));
           saveEdgesToLocalStorage([newEdge], "reactFlowEdges");
@@ -78,7 +85,7 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     },
-    [linkMode, setEdges, sourceNode]
+    [edgeColor, linkMode, setEdges, sourceNode]
   );
 
   const onConnect = useCallback(
@@ -143,6 +150,7 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         linkMode,
         sourceNode,
         mousePosition,
+        edgeColor,
         setLinkMode,
         setNodes,
         setEdges,
@@ -153,6 +161,7 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         onNodesChange,
         onEdgesChange,
         setSourceNode,
+        setEdgeColor,
       }}
     >
       {children}

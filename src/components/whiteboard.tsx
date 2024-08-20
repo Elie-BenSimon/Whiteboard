@@ -34,6 +34,7 @@ import TempConnectionLine from "./flow/tempConnection";
 import { Button } from "./ui/button";
 import Icon from "./ui/icon";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
+import { v4 as uuidV4 } from "uuid";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -67,13 +68,13 @@ function WhiteBoard() {
     setLinkMode,
     onConnect,
     onReconnect,
-    addNewNode,
     onNodesChange,
     onEdgesChange,
     setMousePosition,
     setSourceNode,
   } = useWhiteBoardContext();
-  const { screenToFlowPosition, getZoom, deleteElements } = useReactFlow();
+  const { screenToFlowPosition, getZoom, deleteElements, addNodes } =
+    useReactFlow();
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
   const [listNodes, setListNodes] = useState<Node[]>(
     loadNodesFromLocalStorage("reactFlowNodesList")
@@ -99,9 +100,16 @@ function WhiteBoard() {
         x: event.clientX - 86 * zoom,
         y: event.clientY - 20 * zoom,
       });
-      addNewNode(type, position);
+      addNodes([
+        {
+          id: uuidV4(),
+          type,
+          position,
+          data: { title: "" },
+        },
+      ]);
     },
-    [getZoom, screenToFlowPosition, addNewNode]
+    [getZoom, screenToFlowPosition, addNodes]
   );
 
   const onNodeDragStart: OnNodeDrag = useCallback(
@@ -173,6 +181,7 @@ function WhiteBoard() {
           >
             {typesList.map((type) => (
               <div
+                key={type}
                 className="flex flex-col gap-0.5 pb-4 border-t border-white outline outline-1 outline-border rounded p-2 shadow"
                 style={{ backgroundColor: typeColors[type] }}
               >

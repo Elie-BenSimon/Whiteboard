@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Value } from "node_modules/react-calendar/dist/esm/shared/types";
-import { Node } from "@xyflow/react";
+import { Edge, Node } from "@xyflow/react";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -13,12 +13,14 @@ export const clamp = (value: number, min: number, max: number): number => {
 
 export const saveNodesToLocalStorage = (nodes: Node[], key: string): void => {
   const prevSavedNodes = JSON.parse(localStorage.getItem(key) || "[]");
-  const savedNodesSet = new Set(prevSavedNodes);
+  const savedNodesSet = new Set();
 
   nodes.forEach((node) => {
     localStorage.setItem(`${key}-${node.id}`, JSON.stringify(node));
     savedNodesSet.add(node.id);
   });
+
+  savedNodesSet.add(prevSavedNodes);
 
   localStorage.setItem(key, JSON.stringify([...savedNodesSet]));
 };
@@ -60,6 +62,61 @@ export const deleteNodesFromLocalStorage = (
       });
 
       localStorage.setItem(key, JSON.stringify([...nodeIdsSet]));
+    }
+  }
+};
+
+export const saveEdgesToLocalStorage = (edges: Edge[], key: string): void => {
+  const prevSavedEdges = JSON.parse(localStorage.getItem(key) || "[]");
+  const savedEdgesSet = new Set();
+
+  edges.forEach((edge) => {
+    localStorage.setItem(`${key}-${edge.id}`, JSON.stringify(edge));
+    savedEdgesSet.add(edge.id);
+  });
+
+  savedEdgesSet.add(prevSavedEdges);
+
+  localStorage.setItem(key, JSON.stringify([...savedEdgesSet]));
+};
+
+export const loadEdgesFromLocalStorage = (key: string): Edge[] => {
+  const savedEdges = localStorage.getItem(key);
+
+  if (savedEdges) {
+    const edgeIds = JSON.parse(savedEdges);
+
+    if (Array.isArray(edgeIds)) {
+      return edgeIds
+        .map((edgeId) => {
+          const rawEdge = localStorage.getItem(`${key}-${edgeId}`);
+          return rawEdge ? JSON.parse(rawEdge) : null;
+        })
+        .filter((edge) => edge !== null) as Edge[];
+    }
+  }
+
+  return [];
+};
+
+export const deleteEdgesFromLocalStorage = (
+  edges: Edge[],
+  key: string
+): void => {
+  const savedEdges = localStorage.getItem(key);
+
+  if (savedEdges) {
+    const edgeIds = JSON.parse(savedEdges);
+
+    if (Array.isArray(edgeIds)) {
+      const edgeIdsSet = new Set(edgeIds);
+
+      edges.forEach((edge) => {
+        localStorage.removeItem(`${key}-${edge.id}`);
+        edgeIdsSet.delete(edge.id);
+      });
+
+      localStorage.setItem(key, JSON.stringify([...edgeIdsSet]));
     }
   }
 };

@@ -47,6 +47,7 @@ const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
     e: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     if (e.key === "Backspace" && !data.description) {
+      e.preventDefault();
       setIsDescriptionEditable(false);
       if (titleRef.current) {
         titleRef.current.focus();

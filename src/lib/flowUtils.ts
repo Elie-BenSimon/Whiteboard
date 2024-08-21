@@ -1,4 +1,21 @@
-import { Position, Node, XYPosition, InternalNode } from "@xyflow/react";
+import {
+  Position,
+  Node,
+  XYPosition,
+  InternalNode,
+  getBezierPath,
+  getStraightPath,
+  getSmoothStepPath,
+} from "@xyflow/react";
+
+export type EdgeShapes = "bezier" | "straight" | "step";
+
+export type EdgeParams = {
+  color: string;
+  animated: boolean;
+  shape: EdgeShapes;
+  width: number;
+};
 
 const getNodeIntersection = (
   intersectionNode: InternalNode<Node>,
@@ -87,4 +104,25 @@ export const getEdgeParams = (
     sourcePosition,
     targetPosition,
   };
+};
+
+type EdgePathParams = {
+  shape: EdgeShapes;
+  sourceX: number;
+  sourceY: number;
+  sourcePosition: Position;
+  targetX: number;
+  targetY: number;
+  targetPosition: Position;
+};
+
+export const getEdgePath = ({ shape, ...rest }: EdgePathParams) => {
+  switch (shape) {
+    case "bezier":
+      return getBezierPath(rest);
+    case "straight":
+      return getStraightPath(rest);
+    case "step":
+      return getSmoothStepPath(rest);
+  }
 };

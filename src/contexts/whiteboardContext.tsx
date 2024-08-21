@@ -23,6 +23,7 @@ import {
   saveEdgesToLocalStorage,
   saveNodesToLocalStorage,
 } from "@/lib/utils";
+import { EdgeParams } from "@/lib/flowUtils";
 
 interface WhiteBoardContextProps {
   nodes: Node[];
@@ -30,7 +31,7 @@ interface WhiteBoardContextProps {
   linkMode: boolean;
   sourceNode: NodeProps | null;
   mousePosition: { x: number; y: number };
-  edgeColor: string;
+  edgeParams: EdgeParams;
   setLinkMode: React.Dispatch<React.SetStateAction<boolean>>;
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -41,7 +42,7 @@ interface WhiteBoardContextProps {
   onNodesChange: OnNodesChange<Node>;
   onEdgesChange: OnEdgesChange<Edge>;
   setSourceNode: React.Dispatch<React.SetStateAction<NodeProps | null>>;
-  setEdgeColor: React.Dispatch<React.SetStateAction<string>>;
+  setEdgeParams: React.Dispatch<React.SetStateAction<EdgeParams>>;
 }
 
 const WhiteBoardContext = createContext<WhiteBoardContextProps | undefined>(
@@ -60,7 +61,12 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
   const [linkMode, setLinkMode] = useState(true);
   const [sourceNode, setSourceNode] = useState<NodeProps | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [edgeColor, setEdgeColor] = useState<string>(edgeColors.red);
+  const [edgeParams, setEdgeParams] = useState<EdgeParams>({
+    animated: false,
+    color: edgeColors.gray,
+    shape: "bezier",
+    width: 4,
+  });
 
   const onCardClick = useCallback(
     (node: NodeProps) => {
@@ -74,8 +80,11 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
             sourceHandle: "source",
             targetHandle: "target",
             style: {
-              stroke: edgeColor,
+              stroke: edgeParams.color,
+              strokeWidth: 4,
             },
+            data: { shape: edgeParams.shape },
+            animated: edgeParams.animated,
           };
           setEdges((eds) => addEdge(newEdge, eds));
           saveEdgesToLocalStorage([newEdge], "reactFlowEdges");
@@ -85,7 +94,7 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     },
-    [edgeColor, linkMode, setEdges, sourceNode]
+    [edgeParams, linkMode, setEdges, sourceNode]
   );
 
   const onConnect = useCallback(
@@ -94,7 +103,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         addEdge(
           {
             ...params,
-            type: "floating",
           },
           eds
         )
@@ -144,23 +152,23 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <WhiteBoardContext.Provider
       value={{
-        nodes,
         edges,
+        edgeParams,
         linkMode,
-        sourceNode,
         mousePosition,
-        edgeColor,
-        setLinkMode,
-        setNodes,
-        setEdges,
-        setMousePosition,
+        nodes,
+        sourceNode,
         onCardClick,
         onConnect,
-        onReconnect,
-        onNodesChange,
         onEdgesChange,
+        onNodesChange,
+        onReconnect,
+        setEdges,
+        setEdgeParams,
+        setLinkMode,
+        setMousePosition,
+        setNodes,
         setSourceNode,
-        setEdgeColor,
       }}
     >
       {children}

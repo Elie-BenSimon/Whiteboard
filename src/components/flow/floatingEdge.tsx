@@ -1,7 +1,8 @@
-import { getEdgeParams } from "@/lib/flowUtils";
-import { EdgeProps, getBezierPath, useInternalNode } from "@xyflow/react";
+import { EdgeShapes, getEdgeParams, getEdgePath } from "@/lib/flowUtils";
+import { BaseEdge, EdgeProps, useInternalNode } from "@xyflow/react";
 
-function FloatingEdge({ id, source, target, markerEnd, style }: EdgeProps) {
+function FloatingEdge(props: EdgeProps) {
+  const { source, target, data } = props;
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
@@ -14,25 +15,17 @@ function FloatingEdge({ id, source, target, markerEnd, style }: EdgeProps) {
     targetNode
   );
 
-  const [edgePath] = getBezierPath({
+  const [edgePath] = getEdgePath({
+    shape: (data?.shape as EdgeShapes) ?? "bezier",
     sourceX: sx,
     sourceY: sy,
     sourcePosition,
-    targetPosition,
     targetX: tx,
     targetY: ty,
+    targetPosition,
   });
 
-  return (
-    <path
-      id={id}
-      className="react-flow__edge-path stroke-[4px]"
-      d={edgePath}
-      markerEnd={markerEnd}
-      style={style}
-      fill="none"
-    />
-  );
+  return <BaseEdge {...props} path={edgePath} />;
 }
 
 export default FloatingEdge;

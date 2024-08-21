@@ -1,17 +1,17 @@
 "use client";
 import {
-  getBezierPath,
   InternalNode,
   Node,
   useReactFlow,
   ViewportPortal,
 } from "@xyflow/react";
 import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
-import { getEdgeParams } from "@/lib/flowUtils";
+import { getEdgeParams, getEdgePath } from "@/lib/flowUtils";
+import { cn } from "@/lib/utils";
 
 const TempConnectionLine = () => {
   const { screenToFlowPosition } = useReactFlow();
-  const { mousePosition, sourceNode, edgeColor } = useWhiteBoardContext();
+  const { mousePosition, sourceNode, edgeParams } = useWhiteBoardContext();
 
   const flowMousePosition = screenToFlowPosition({
     x: mousePosition.x,
@@ -86,7 +86,8 @@ const TempConnectionLine = () => {
   const adjustedTargetX = flowMousePosition.x > sx ? width - margin : margin;
   const adjustedTargetY = flowMousePosition.y > sy ? height - margin : margin;
 
-  const [edgePath] = getBezierPath({
+  const [edgePath] = getEdgePath({
+    shape: edgeParams.shape,
     sourceX: adjustedSourceX,
     sourceY: adjustedSourceY,
     sourcePosition,
@@ -98,29 +99,22 @@ const TempConnectionLine = () => {
   return (
     <ViewportPortal>
       <svg
-        className="pointer-events-none z-50"
+        className={cn(
+          "react-flow__edge pointer-events-none z-50",
+          edgeParams.animated && "animated"
+        )}
         style={{
           left: minX,
           top: minY,
           width: Math.max(1, width),
           height: Math.max(1, height),
           position: "absolute",
-          stroke: edgeColor,
+          stroke: edgeParams.color,
+          strokeWidth: edgeParams.width,
         }}
       >
-        <path
-          className="stroke-[4px] z-20"
-          d={edgePath}
-          strokeWidth={4}
-          fill="none"
-        />
-        <circle
-          className="stroke-[4px] z-20"
-          cx={adjustedTargetX}
-          cy={adjustedTargetY}
-          r={6}
-          fill="white"
-        />
+        <path d={edgePath} strokeWidth={4} fill="none" />
+        <circle cx={adjustedTargetX} cy={adjustedTargetY} r={6} fill="white" />
       </svg>
     </ViewportPortal>
   );

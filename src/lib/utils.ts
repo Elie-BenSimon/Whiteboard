@@ -13,14 +13,12 @@ export const clamp = (value: number, min: number, max: number): number => {
 
 export const saveNodesToLocalStorage = (nodes: Node[], key: string): void => {
   const prevSavedNodes = JSON.parse(localStorage.getItem(key) || "[]");
-  const savedNodesSet = new Set();
+  const savedNodesSet = new Set(prevSavedNodes);
 
   nodes.forEach((node) => {
     localStorage.setItem(`${key}-${node.id}`, JSON.stringify(node));
     savedNodesSet.add(node.id);
   });
-
-  savedNodesSet.add(prevSavedNodes);
 
   localStorage.setItem(key, JSON.stringify([...savedNodesSet]));
 };
@@ -68,14 +66,12 @@ export const deleteNodesFromLocalStorage = (
 
 export const saveEdgesToLocalStorage = (edges: Edge[], key: string): void => {
   const prevSavedEdges = JSON.parse(localStorage.getItem(key) || "[]");
-  const savedEdgesSet = new Set();
+  const savedEdgesSet = new Set(prevSavedEdges);
 
   edges.forEach((edge) => {
     localStorage.setItem(`${key}-${edge.id}`, JSON.stringify(edge));
     savedEdgesSet.add(edge.id);
   });
-
-  savedEdgesSet.add(prevSavedEdges);
 
   localStorage.setItem(key, JSON.stringify([...savedEdgesSet]));
 };

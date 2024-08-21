@@ -28,7 +28,6 @@ import {
   cn,
   loadNodesFromLocalStorage,
   saveNodesToLocalStorage,
-  deleteNodesFromLocalStorage,
 } from "@/lib/utils";
 import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
@@ -126,7 +125,6 @@ function WhiteBoard() {
         );
         deleteElements({ nodes: nodesToDelete }).then(({ deletedNodes }) => {
           setDraggedNodes([]);
-          deleteNodesFromLocalStorage(deletedNodes, "reactFlowNodes");
           setListNodes((prevNodes) => [...prevNodes, ...deletedNodes]);
           saveNodesToLocalStorage(nodes, "reactFlowNodesList");
         });

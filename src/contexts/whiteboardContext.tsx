@@ -110,7 +110,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      console.log("nodes changed", changes);
       onNodesStateChange(changes);
       if (changes[0].type !== "remove") {
         saveNodesToLocalStorage(nodes, "reactFlowNodes");

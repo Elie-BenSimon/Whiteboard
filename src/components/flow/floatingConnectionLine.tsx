@@ -51,7 +51,7 @@ function FloatingConnectionLine({
       <path
         fill="none"
         stroke="#222"
-        strokeWidth={1.5}
+        strokeWidth={4}
         className="animated"
         d={edgePath}
       />
@@ -61,7 +61,7 @@ function FloatingConnectionLine({
         fill="#fff"
         r={3}
         stroke="#222"
-        strokeWidth={1.5}
+        strokeWidth={4}
       />
     </g>
   );

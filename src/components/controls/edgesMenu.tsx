@@ -27,7 +27,7 @@ const EdgesMenu = () => {
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
+          <button
             className="rounded-full p-0 w-5 h-5 relative border"
             style={{ backgroundColor: edgeColor }}
             onClick={() => {
@@ -37,7 +37,7 @@ const EdgesMenu = () => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Link options</DropdownMenuLabel>
+          <DropdownMenuLabel>Link color</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <div className="flex gap-1">
@@ -45,6 +45,7 @@ const EdgesMenu = () => {
                 const color = edgeColors[key as EdgeColor];
                 return (
                   <button
+                    key={key}
                     className={cn(
                       "h-5 w-5 rounded-full border hover:scale-110 transition-transform",
                       color === edgeColor && "ring-1"

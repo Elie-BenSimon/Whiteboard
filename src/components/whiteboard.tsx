@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   ReactFlow,
   Controls,
@@ -31,7 +31,6 @@ import {
 } from "@/lib/utils";
 import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
-import { v4 as uuidV4 } from "uuid";
 import EdgesMenu from "./controls/edgesMenu";
 
 const nodeTypes = {
@@ -42,6 +41,8 @@ const nodeTypes = {
   choices: ChoicesCard,
   media: MediaCard,
 };
+
+type NodeType = keyof typeof nodeTypes;
 
 const typeColors = {
   stickyNote: "rgb(254 249 195)",
@@ -69,43 +70,10 @@ function WhiteBoard() {
     setMousePosition,
     setSourceNode,
   } = useWhiteBoardContext();
-  const { screenToFlowPosition, getZoom, deleteElements, addNodes } =
-    useReactFlow();
+  const { deleteElements } = useReactFlow();
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
   const [listNodes, setListNodes] = useState<Node[]>(
     loadNodesFromLocalStorage("reactFlowNodesList")
-  );
-
-  const onDragOver: React.DragEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
-      event.preventDefault();
-      if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = "move";
-      }
-    },
-    []
-  );
-
-  const onDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
-      event.preventDefault();
-      const type = event.dataTransfer?.getData("application/reactflow");
-      if (!type) return;
-      const zoom = getZoom();
-      const position = screenToFlowPosition({
-        x: event.clientX - 86 * zoom,
-        y: event.clientY - 20 * zoom,
-      });
-      addNodes([
-        {
-          id: uuidV4(),
-          type,
-          position,
-          data: { title: "" },
-        },
-      ]);
-    },
-    [getZoom, screenToFlowPosition, addNodes]
   );
 
   const onNodeDragStart: OnNodeDrag = useCallback(
@@ -133,9 +101,7 @@ function WhiteBoard() {
     [deleteElements, draggedNodes, nodes]
   );
 
-  const typesList: Array<keyof typeof nodeTypes> = Object.keys(
-    nodeTypes
-  ) as Array<keyof typeof nodeTypes>;
+  const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
 
   return (
     <div className="relative w-full h-full flex">
@@ -149,8 +115,6 @@ function WhiteBoard() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
           onReconnect={onReconnect}
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}

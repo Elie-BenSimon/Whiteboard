@@ -84,7 +84,7 @@ const EdgesMenu = () => {
               className="flex gap-3 justify-between h-5 w-full"
             >
               {shapes.map((shape) => (
-                <div className="flex gap-0.5 items-center">
+                <div key={shape} className="flex gap-0.5 items-center">
                   <RadioGroupItem id={shape} value={shape} />
                   <Label htmlFor={shape} className="cursor-pointer">
                     {shape}

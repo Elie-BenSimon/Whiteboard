@@ -20,7 +20,7 @@ const EventCard: React.FC<NodeProps & EventCardProps> = (props) => {
   const { updateNode } = useReactFlow();
 
   useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 10);
+    setTimeout(() => titleRef.current?.focus(), 15);
   }, []);
 
   useEffect(() => {

@@ -32,6 +32,10 @@ interface WhiteBoardContextProps {
   sourceNode: NodeProps | null;
   mousePosition: { x: number; y: number };
   edgeParams: EdgeParams;
+  listNodes: Node[];
+  isDraggingFromList: boolean;
+  setIsDraggingFromList: React.Dispatch<React.SetStateAction<boolean>>;
+  setListNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setLinkMode: React.Dispatch<React.SetStateAction<boolean>>;
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -67,6 +71,11 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
     shape: "bezier",
     width: 4,
   });
+
+  const [listNodes, setListNodes] = useState<Node[]>(
+    loadNodesFromLocalStorage("reactFlowNodesList")
+  );
+  const [isDraggingFromList, setIsDraggingFromList] = useState(false);
 
   const onCardClick = useCallback(
     (node: NodeProps) => {
@@ -158,6 +167,10 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         mousePosition,
         nodes,
         sourceNode,
+        listNodes,
+        isDraggingFromList,
+        setIsDraggingFromList,
+        setListNodes,
         onCardClick,
         onConnect,
         onEdgesChange,

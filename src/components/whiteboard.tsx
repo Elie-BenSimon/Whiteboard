@@ -24,14 +24,11 @@ import {
   useWhiteBoardContext,
   WhiteBoardProvider,
 } from "../contexts/whiteboardContext";
-import {
-  cn,
-  loadNodesFromLocalStorage,
-  saveNodesToLocalStorage,
-} from "@/lib/utils";
+import { cn, saveNodesToLocalStorage } from "@/lib/utils";
 import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
 import EdgesMenu from "./controls/edgesMenu";
+import DrawerItem from "./controls/drawerItem";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -63,6 +60,9 @@ function WhiteBoard() {
     edges,
     mousePosition,
     sourceNode,
+    listNodes,
+    isDraggingFromList,
+    setListNodes,
     onConnect,
     onReconnect,
     onNodesChange,
@@ -72,9 +72,6 @@ function WhiteBoard() {
   } = useWhiteBoardContext();
   const { deleteElements } = useReactFlow();
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
-  const [listNodes, setListNodes] = useState<Node[]>(
-    loadNodesFromLocalStorage("reactFlowNodesList")
-  );
 
   const onNodeDragStart: OnNodeDrag = useCallback(
     (_, node) => {
@@ -98,7 +95,7 @@ function WhiteBoard() {
         });
       }
     },
-    [deleteElements, draggedNodes, nodes]
+    [deleteElements, draggedNodes, nodes, setListNodes]
   );
 
   const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
@@ -131,10 +128,11 @@ function WhiteBoard() {
         >
           <div
             className={cn(
-              "bg-card h-full overflow-y-scroll border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
+              "bg-card h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
               mousePosition.x < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN &&
                 "translate-x-0",
-              !draggedNodes.length && "relative z-20"
+              !draggedNodes.length && "relative z-20",
+              !isDraggingFromList && "overflow-y-scroll"
             )}
             style={{ width: DRAWER_WIDTH }}
           >
@@ -148,9 +146,7 @@ function WhiteBoard() {
                 {listNodes
                   .filter((node) => node.type === type)
                   .map((node) => (
-                    <div className="truncate" key={node.id}>
-                      {String(node.data.title)}
-                    </div>
+                    <DrawerItem key={node.id} node={node} />
                   ))}
               </div>
             ))}

@@ -27,7 +27,7 @@ const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
   }, [data.description]);
 
   useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 10);
+    setTimeout(() => titleRef.current?.focus(), 15);
   }, []);
 
   const handleTitleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

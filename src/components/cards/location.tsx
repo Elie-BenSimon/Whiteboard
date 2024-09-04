@@ -38,7 +38,7 @@ const LocationCard: React.FC<NodeProps & LocationCardProps> = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 10);
+    setTimeout(() => titleRef.current?.focus(), 15);
   }, []);
 
   useEffect(() => {

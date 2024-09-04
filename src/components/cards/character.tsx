@@ -54,7 +54,7 @@ const CharacterCard: React.FC<NodeProps & CharacterCardProps> = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 10);
+    setTimeout(() => titleRef.current?.focus(), 15);
   }, []);
 
   useEffect(() => {

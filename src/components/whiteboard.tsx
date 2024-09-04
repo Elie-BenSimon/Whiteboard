@@ -128,7 +128,7 @@ function WhiteBoard() {
         >
           <div
             className={cn(
-              "bg-card h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
+              "relative bg-card h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
               mousePosition.x < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN &&
                 "translate-x-0",
               !draggedNodes.length && "relative z-20",

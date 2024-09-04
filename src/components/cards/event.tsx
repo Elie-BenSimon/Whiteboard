@@ -34,7 +34,7 @@ const EventCard: React.FC<NodeProps & EventCardProps> = (props) => {
 
   return (
     <BaseCard {...props}>
-      <div className="w-56 flex flex-col bg-background rounded overflow-hidden shadow-lg">
+      <div className="w-56 flex flex-col bg-background rounded overflow-hidden">
         <CardHeader color="bg-red-100" />
         <div className="p-2 flex-grow flex flex-col gap-2 bg-red-100/20">
           <textarea

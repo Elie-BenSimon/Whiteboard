@@ -64,7 +64,7 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
           position={Position.Bottom}
           className="bg-transparent w-full h-full absolute top-0 left-0 translate-x-0 rounded-none border-0"
         />
-        <div className="relative w-fit h-full">{children}</div>
+        <div className="relative w-fit h-full shadow-lg">{children}</div>
       </div>
     </div>
   );

@@ -39,9 +39,11 @@ const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
     const newNode = {
       ...node,
       position: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
+      dragging: false,
+      selected: false,
     };
     addNodes(newNode);
-    deleteNodesFromLocalStorage([node], "reactFlowNodesList");
+    deleteNodesFromLocalStorage([newNode], "reactFlowNodesList");
     setListNodes((prevNodes) => prevNodes.filter((n) => n.id !== node.id));
     saveNodesToLocalStorage([newNode], "reactFlowNodes");
   };
@@ -65,7 +67,9 @@ const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
           isDragging && "cursor-grabbing pointer-events-none"
         )}
       >
-        <div className="truncate">{String(node.data.title)}</div>
+        <div className="truncate pointer-events-none">
+          {String(node.data.title)}
+        </div>
         <Icon
           name="GripHorizontal"
           size={18}

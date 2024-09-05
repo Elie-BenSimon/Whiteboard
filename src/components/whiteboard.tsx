@@ -29,6 +29,7 @@ import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
 import EdgesMenu from "./controls/edgesMenu";
 import DrawerItem from "./controls/drawerItem";
+import WikiDrawer from "./layout/wikiDrawer";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -101,7 +102,12 @@ function WhiteBoard() {
   const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
 
   return (
-    <div className="relative w-full h-full flex">
+    <div
+      className="relative w-full h-full flex overflow-hidden"
+      onMouseMove={(e) => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+      }}
+    >
       <div className="reactflow-wrapper h-full w-full">
         <ReactFlow
           nodeTypes={nodeTypes as unknown as NodeTypes}
@@ -116,9 +122,6 @@ function WhiteBoard() {
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
           onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
-          onMouseMove={(e) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-          }}
           onClick={() => {
             if (sourceNode) setSourceNode(null);
           }}
@@ -131,7 +134,7 @@ function WhiteBoard() {
               "relative bg-card h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
               mousePosition.x < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN &&
                 "translate-x-0",
-              !draggedNodes.length && "relative z-20",
+              !draggedNodes.length && "z-20",
               !isDraggingFromList && "overflow-y-scroll"
             )}
             style={{ width: DRAWER_WIDTH }}
@@ -162,6 +165,7 @@ function WhiteBoard() {
           <EdgesMenu />
         </div>
       </div>
+      <WikiDrawer />
     </div>
   );
 }

@@ -31,7 +31,12 @@ const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
   }, []);
 
   const handleTitleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (title.length && e.key === "Enter") {
+    const textarea = e.currentTarget;
+    const isCaretAtEnd =
+      textarea.selectionStart === textarea.selectionEnd &&
+      textarea.selectionStart === textarea.value.length;
+
+    if (title.length && e.key === "Enter" && isCaretAtEnd) {
       e.preventDefault();
       e.currentTarget.blur();
       setIsDescriptionEditable(true);

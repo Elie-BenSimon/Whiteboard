@@ -52,7 +52,7 @@ const WikiDrawer = () => {
         position={position}
         onStop={handleDragStop}
         onDrag={(_, data) => {
-          setTimeout(() => setLastX(data.x), 40);
+          setTimeout(() => setLastX(data.x), 25);
           setDrawerWidth(wikiWidth - data.x);
         }}
         onStart={(_, data) => {

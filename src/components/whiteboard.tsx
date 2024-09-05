@@ -11,15 +11,15 @@ import {
   OnNodeDrag,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import StickyNote from "./cards/stickyNote";
+import StickyNote from "./nodeCards/stickyNote";
 import FloatingEdge from "./flow/floatingEdge";
 import FloatingConnectionLine from "./flow/floatingConnectionLine";
 import CardsMenu from "./controls/cardsMenu";
-import CharacterCard from "./cards/character";
-import LocationCard from "./cards/location";
-import ChoicesCard from "./cards/choices";
-import EventCard from "./cards/event";
-import MediaCard from "./cards/media";
+import CharacterCard from "./nodeCards/character";
+import LocationCard from "./nodeCards/location";
+import ChoicesCard from "./nodeCards/choices";
+import EventCard from "./nodeCards/event";
+import MediaCard from "./nodeCards/media";
 import {
   useWhiteBoardContext,
   WhiteBoardProvider,

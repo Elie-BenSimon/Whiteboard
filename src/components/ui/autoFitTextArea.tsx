@@ -6,6 +6,7 @@ type AutoFitTextAreaProps = {
   className?: string;
   containerClassName?: string;
   label?: string;
+  placeholder?: string;
   id?: string;
   value: string;
   onChange: (newValue: string) => void;
@@ -17,6 +18,7 @@ const AutoFitTextArea: React.FC<AutoFitTextAreaProps> = ({
   className,
   containerClassName,
   label,
+  placeholder,
   id,
   value,
   onChange,
@@ -65,6 +67,7 @@ const AutoFitTextArea: React.FC<AutoFitTextAreaProps> = ({
           target.style.height = "auto";
           target.style.height = `${target.scrollHeight}px`;
         }}
+        placeholder={placeholder}
       />
     </div>
   );

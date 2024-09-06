@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 type WikiCardProps = {
   title?: string;
+  children?: React.ReactNode;
   description?: string;
   width?: string;
   handleClick?: () => void;
@@ -9,6 +10,7 @@ type WikiCardProps = {
 
 const WikiCard: React.FC<WikiCardProps> = ({
   title,
+  children,
   description,
   width,
   handleClick,
@@ -22,8 +24,9 @@ const WikiCard: React.FC<WikiCardProps> = ({
       style={{ width: width ? width : 320 }}
       onClick={handleClick}
     >
-      <h2 className="text-xl font-bold">{title}</h2>
+      <h2 className="text-xl font-bold truncate">{title}</h2>
       <p className="text-sm">{description}</p>
+      {children}
     </div>
   );
 };

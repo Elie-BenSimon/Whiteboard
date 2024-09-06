@@ -174,3 +174,24 @@ export const getDateParts = (date?: Value | string) => {
 
   return { dayNumber: "", dayName: "", monthName: "", year: "" };
 };
+
+export const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export const getCardTitleName = (nodeType: string) => {
+  switch (nodeType) {
+    case "character":
+      return "Nom du personnage";
+    case "location":
+      return "Nom du lieu";
+    case "event":
+      return "Nom de l'événement";
+    case "choices":
+      return "Titre du dialogue";
+    case "media":
+      return "Titre du média";
+    default:
+      return capitalizeFirstLetter(nodeType);
+  }
+};

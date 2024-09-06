@@ -28,7 +28,7 @@ import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
 import EdgesMenu from "./controls/edgesMenu";
 import DrawerItem from "./controls/drawerItem";
-import WikiDrawer from "./layout/wikiDrawer";
+import WikiDrawer from "./wiki/wikiDrawer";
 
 const nodeTypes = {
   stickyNote: StickyNote,

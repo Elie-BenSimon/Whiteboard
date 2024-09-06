@@ -7,7 +7,7 @@ import {
   deleteNodesFromLocalStorage,
   saveNodesToLocalStorage,
 } from "@/lib/utils";
-import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 
 type DrawerItemProps = {
   node: Node;

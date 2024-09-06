@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useState, useCallback, useMemo } from "react";
 import {
   Node,
   Edge,
@@ -26,32 +26,37 @@ import {
 import { EdgeParams } from "@/lib/flowUtils";
 
 interface WhiteBoardContextProps {
-  nodes: Node[];
-  edges: Edge[];
-  linkMode: boolean;
-  sourceNode: NodeProps | null;
-  mousePosition: { x: number; y: number };
   edgeParams: EdgeParams;
-  listNodes: Node[];
+  edges: Edge[];
   isDraggingFromList: boolean;
-  setIsDraggingFromList: React.Dispatch<React.SetStateAction<boolean>>;
-  setListNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-  setLinkMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
-  setMousePosition: (position: { x: number; y: number }) => void;
+  isWikiLocked: boolean;
+  linkMode: boolean;
+  listNodes: Node[];
+  mousePosition: { x: number; y: number };
+  nodes: Node[];
+  sourceNode: NodeProps | null;
+  wikiSelectedNodes: Node[];
+  wikiSelectedNodesId: string[];
   onCardClick: (node: NodeProps) => void;
   onConnect: (params: Connection) => void;
-  onReconnect: (oldEdge: Edge, newConnection: Connection) => void;
-  onNodesChange: OnNodesChange<Node>;
   onEdgesChange: OnEdgesChange<Edge>;
-  setSourceNode: React.Dispatch<React.SetStateAction<NodeProps | null>>;
+  onNodesChange: OnNodesChange<Node>;
+  onReconnect: (oldEdge: Edge, newConnection: Connection) => void;
   setEdgeParams: React.Dispatch<React.SetStateAction<EdgeParams>>;
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  setIsDraggingFromList: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsWikiLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  setLinkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setListNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setMousePosition: (position: { x: number; y: number }) => void;
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setSourceNode: React.Dispatch<React.SetStateAction<NodeProps | null>>;
+  setWikiSelectedNodesId: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const WhiteBoardContext = createContext<WhiteBoardContextProps | undefined>(
-  undefined
-);
+export const WhiteBoardContext = createContext<
+  WhiteBoardContextProps | undefined
+>(undefined);
 
 export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -76,6 +81,13 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
     loadNodesFromLocalStorage("reactFlowNodesList")
   );
   const [isDraggingFromList, setIsDraggingFromList] = useState(false);
+
+  const [wikiSelectedNodesId, setWikiSelectedNodesId] = useState<string[]>([]);
+  const wikiSelectedNodes = useMemo(
+    () => nodes.filter((node) => wikiSelectedNodesId.includes(node.id)),
+    [nodes, wikiSelectedNodesId]
+  );
+  const [isWikiLocked, setIsWikiLocked] = useState(false);
 
   const onCardClick = useCallback(
     (node: NodeProps) => {
@@ -161,40 +173,35 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <WhiteBoardContext.Provider
       value={{
-        edges,
         edgeParams,
+        edges,
+        isDraggingFromList,
+        isWikiLocked,
         linkMode,
+        listNodes,
         mousePosition,
         nodes,
         sourceNode,
-        listNodes,
-        isDraggingFromList,
-        setIsDraggingFromList,
-        setListNodes,
+        wikiSelectedNodes,
+        wikiSelectedNodesId,
         onCardClick,
         onConnect,
         onEdgesChange,
         onNodesChange,
         onReconnect,
-        setEdges,
         setEdgeParams,
+        setEdges,
+        setIsDraggingFromList,
+        setIsWikiLocked,
         setLinkMode,
+        setListNodes,
         setMousePosition,
         setNodes,
         setSourceNode,
+        setWikiSelectedNodesId,
       }}
     >
       {children}
     </WhiteBoardContext.Provider>
   );
-};
-
-export const useWhiteBoardContext = () => {
-  const context = useContext(WhiteBoardContext);
-  if (!context) {
-    throw new Error(
-      "useWhiteBoardContext must be used within a WhiteBoardProvider"
-    );
-  }
-  return context;
 };

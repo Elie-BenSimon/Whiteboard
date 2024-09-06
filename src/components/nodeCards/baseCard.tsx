@@ -1,4 +1,4 @@
-import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { cn } from "@/lib/utils";
 import { Handle, Position, NodeProps } from "@xyflow/react";
 import React from "react";

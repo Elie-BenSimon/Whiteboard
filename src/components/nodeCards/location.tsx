@@ -1,8 +1,9 @@
 import { NodeProps, useReactFlow } from "@xyflow/react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import BaseCard from "./baseCard";
 import CardHeader from "../ui/cardHeader";
 import { cn } from "@/lib/utils";
+import AutoFitTextArea from "../ui/autoFitTextArea";
 
 type LocationCardProps = {
   title: string;
@@ -18,8 +19,6 @@ const LocationCard: React.FC<NodeProps & LocationCardProps> = (props) => {
     image: backgroundImage,
   } = data as LocationCardProps;
   const { updateNode } = useReactFlow();
-  const titleRef = useRef<HTMLTextAreaElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [image, setImage] = useState<string>(
     backgroundImage || "/location.webp"
   );
@@ -36,24 +35,6 @@ const LocationCard: React.FC<NodeProps & LocationCardProps> = (props) => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
-  useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 15);
-  }, []);
-
-  useEffect(() => {
-    if (titleRef.current) {
-      titleRef.current.style.height = "auto";
-      titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-    }
-  }, [title]);
-
-  useEffect(() => {
-    if (descriptionRef.current) {
-      descriptionRef.current.style.height = "auto";
-      descriptionRef.current.style.height = `${descriptionRef.current.scrollHeight}px`;
-    }
-  }, [description]);
 
   return (
     <BaseCard {...props}>
@@ -76,28 +57,25 @@ const LocationCard: React.FC<NodeProps & LocationCardProps> = (props) => {
                 onChange={handleImageChange}
               />
             </div>
-            <textarea
-              ref={titleRef}
+            <AutoFitTextArea
+              autofocus
               value={title}
-              onChange={(e) =>
-                updateNode(id, { data: { ...data, title: e.target.value } })
-              }
               className={cn(
-                "bg-transparent p-1 text-2xl font-bold border-0 focus:outline-none resize-none w-full overflow-hidden",
+                "text-2xl font-bold p-1",
                 !title.length && "border-b border-accent-foreground"
               )}
-              rows={1}
+              onChange={(newValue) =>
+                updateNode(id, { data: { ...data, title: newValue } })
+              }
             />
-            <textarea
-              ref={descriptionRef}
+            <AutoFitTextArea
               value={description || ""}
-              onChange={(e) =>
+              className="text-xs p-1"
+              onChange={(newValue) =>
                 updateNode(id, {
-                  data: { ...data, description: e.target.value },
+                  data: { ...data, description: newValue },
                 })
               }
-              className="bg-transparent p-1 w-full h-full flex-grow border-0 focus:outline-none resize-none text-xs"
-              rows={1}
             />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { NodeProps, useReactFlow } from "@xyflow/react";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import BaseCard from "./baseCard";
 import CardHeader from "../ui/cardHeader";
 import Calendar from "react-calendar";
@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Value } from "node_modules/react-calendar/dist/esm/shared/types";
 import "react-calendar/dist/Calendar.css";
 import { getDateParts } from "@/lib/utils";
+import AutoFitTextArea from "../ui/autoFitTextArea";
 
 type EventCardProps = {
   title: string;
@@ -16,19 +17,7 @@ type EventCardProps = {
 const EventCard: React.FC<NodeProps & EventCardProps> = (props) => {
   const { id, data } = props;
   const { title, date } = data as EventCardProps;
-  const titleRef = useRef<HTMLTextAreaElement>(null);
   const { updateNode } = useReactFlow();
-
-  useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 15);
-  }, []);
-
-  useEffect(() => {
-    if (titleRef.current) {
-      titleRef.current.style.height = "auto";
-      titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-    }
-  }, [title]);
 
   const { dayNumber, dayName, monthName, year } = getDateParts(date);
 
@@ -37,17 +26,15 @@ const EventCard: React.FC<NodeProps & EventCardProps> = (props) => {
       <div className="w-56 flex flex-col bg-background rounded overflow-hidden">
         <CardHeader color="bg-red-100" />
         <div className="p-2 flex-grow flex flex-col gap-2 bg-red-100/20">
-          <textarea
-            id="name"
-            ref={titleRef}
+          <AutoFitTextArea
+            autofocus
             value={title}
-            onChange={(e) => {
+            className="p-1 text-xl font-bold rounded bg-background border-b"
+            onChange={(newValue) => {
               updateNode(id, {
-                data: { ...data, title: e.target.value },
+                data: { ...data, title: newValue },
               });
             }}
-            className="w-full border-b focus:outline-none p-1 text-xl font-bold resize-none overflow-hidden rounded"
-            rows={1}
           />
           <Popover>
             <PopoverTrigger>

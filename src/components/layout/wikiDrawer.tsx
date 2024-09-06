@@ -3,6 +3,9 @@ import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import WikiCard from "../ui/wikiCard";
 import Icon from "../ui/icon";
 import { cn } from "@/lib/utils";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
+import { useReactFlow } from "@xyflow/react";
+import AutoFitTextArea from "../ui/autoFitTextArea";
 
 const HANDLE_WIDTH = 60;
 
@@ -14,6 +17,9 @@ const WikiDrawer = () => {
   const [drawerWidth, setDrawerWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const wikiContainerRef = useRef<HTMLDivElement>(null);
+  const { wikiSelectedNodes, setWikiSelectedNodesId } = useWhiteBoardContext();
+  const selectedNodesLength = wikiSelectedNodes.length;
+  const { updateNode } = useReactFlow();
 
   useEffect(() => {
     setPosition({ x: wikiWidth - HANDLE_WIDTH, y: 0 });
@@ -40,6 +46,22 @@ const WikiDrawer = () => {
     setDrawerWidth(wikiWidth - newX);
     setIsDragging(false);
   };
+
+  const wikiTitle =
+    "Wiki" +
+    (selectedNodesLength > 0
+      ? " - " +
+        (selectedNodesLength === 1
+          ? wikiSelectedNodes[0].data.title
+          : `${selectedNodesLength} cartes selectionnées`)
+      : "");
+
+  const wikiDescription =
+    selectedNodesLength > 0
+      ? selectedNodesLength === 1
+        ? wikiSelectedNodes[0].data.description
+        : ""
+      : "Sélectionnez une ou plusieurs note pour voir leur informations plus en détails ici";
 
   return (
     <div
@@ -69,7 +91,7 @@ const WikiDrawer = () => {
             )}
             style={{ width: HANDLE_WIDTH }}
           >
-            <div className="relative h-full group flex flex-col items-center justify-center border-[#17171f] rounded-lg shadow-inner">
+            <div className="relative h-full group flex flex-col items-center justify-center bg-[#5d73a1a3] border-[#17171f] rounded-lg shadow-inner">
               <p
                 className={cn(
                   "absolute bottom-16 -rotate-90 whitespace-nowrap font-semibold text-xl text-slate-400 group-hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all duration-500",
@@ -85,51 +107,36 @@ const WikiDrawer = () => {
           </div>
           <div className="overflow-y-scroll">
             <div
-              className="flex flex-wrap h-full p-4 pr-20 gap-4"
+              className="flex flex-wrap p-4 pr-20 gap-4"
               style={{ width: drawerWidth }}
             >
-              <h1 className="w-full text-3xl font-bold">Wiki</h1>
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-                width={"656"}
+              <h1 className="w-full text-3xl font-bold">{wikiTitle}</h1>
+              {wikiSelectedNodes &&
+                selectedNodesLength > 1 &&
+                wikiSelectedNodes.map((node) => (
+                  <WikiCard
+                    title={String(node.data.title ?? "")}
+                    description={String(node.data.description ?? "")}
+                    handleClick={() => setWikiSelectedNodesId([node.id])}
+                  />
+                ))}
+
+              <AutoFitTextArea
+                value={String(wikiDescription ?? "")}
+                className="text-sm"
+                onChange={(newValue) => {
+                  const selectedNode = wikiSelectedNodes[0];
+                  updateNode(selectedNode.id, {
+                    data: {
+                      ...selectedNode.data,
+                      description: newValue,
+                    },
+                  });
+                }}
               />
               <WikiCard
                 title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?  adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?  adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-                width="100%"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem fficiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description="sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description=" Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consec?"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
-              />
-              <WikiCard
-                title="title"
-                description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo aliquid fuga distinctio. Optio officiis corrupti impedit eos animi tenetur velit odio atque magnam! Nulla aliquid quae praesentium eaque aspernatur repellat doloremque velit, ab dignissimos cumque consectetur dolore optio consequatur temporibus, beatae officiis soluta a, debitis modi. Optio perspiciatis repudiandae odit?"
+                description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam reiciendis aliquam numquam enim. Sequi consequatur, itaque voluptatem sed corrupti optio. Sed commodi quidem similique, adipisci atque et possimus exercitationem quisquam magnam explicabo reiciendis iure. Exercitationem necessitatibus nam ratione, quis voluptatum, similique sapiente impedit facere ipsam, hic cumque ullam eos officiis at ipsa! Nisi facere officiis cumque commodi quasi omnis enim aliquam molestias earum assumenda, amet sint voluptatem quam asperiores quae odit. Quisquam libero consequuntur fugiat expedita obcaecati officiis aliquid ea quibusdam, amet rem, numquam neque enim unde nisi a animi natus voluptas aperiam quae! Et quaerat iste ad quisquam nesciunt?"
               />
             </div>
           </div>

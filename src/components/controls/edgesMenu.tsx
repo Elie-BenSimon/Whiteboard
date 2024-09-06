@@ -1,4 +1,4 @@
-import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { Button } from "../ui/button";
 import Icon from "../ui/icon";
 import {

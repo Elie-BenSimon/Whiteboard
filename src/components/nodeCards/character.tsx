@@ -1,5 +1,5 @@
 import { NodeProps, useReactFlow } from "@xyflow/react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import BaseCard from "./baseCard";
 import Icon from "../ui/icon";
 import Tag, { TagData } from "../ui/tag";
@@ -7,6 +7,7 @@ import TagCombobox from "../ui/tagComboBox";
 import { getRandomColor200 } from "@/lib/utils";
 import { v4 as uuidV4 } from "uuid";
 import CardHeader from "../ui/cardHeader";
+import AutoFitTextArea from "../ui/autoFitTextArea";
 
 type CharacterCardProps = {
   title: string;
@@ -24,8 +25,6 @@ const CharacterCard: React.FC<NodeProps & CharacterCardProps> = (props) => {
     image: characterImage,
   } = data as CharacterCardProps;
   const [image, setImage] = useState<string | null>(characterImage ?? null);
-  const titleRef = useRef<HTMLTextAreaElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { updateNode } = useReactFlow();
 
   const [tagTypes, setTagTypes] = useState<TagData[]>([
@@ -52,26 +51,6 @@ const CharacterCard: React.FC<NodeProps & CharacterCardProps> = (props) => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
-  useEffect(() => {
-    setTimeout(() => titleRef.current?.focus(), 15);
-  }, []);
-
-  useEffect(() => {
-    if (titleRef.current) {
-      titleRef.current.style.height = "auto";
-      titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-    }
-  }, [title]);
-
-  useEffect(() => {
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = "auto";
-      textAreaRef.current.style.height = `${
-        textAreaRef.current.scrollHeight + 4
-      }px`;
-    }
-  }, [data.description, data.tagsList]);
 
   const addTag = (tagId: string) => {
     const existingTag = tagTypes.find((tag) => tag.id === tagId);
@@ -134,50 +113,30 @@ const CharacterCard: React.FC<NodeProps & CharacterCardProps> = (props) => {
               </div>
             </div>
             <div className="flex flex-col flex-grow">
-              <div className="flex flex-col">
-                <label
-                  htmlFor="name"
-                  className="text-[8px] text-muted-foreground"
-                >
-                  name
-                </label>
-                <textarea
-                  id="name"
-                  ref={titleRef}
-                  value={title}
-                  onChange={(e) => {
-                    updateNode(id, {
-                      data: { ...data, title: e.target.value },
-                    });
-                  }}
-                  className="w-full border-b focus:outline-none px-1 resize-none overflow-hidden rounded-sm font-semibold"
-                  rows={1}
-                />
-              </div>
-              <div className="flex flex-col flex-grow">
-                <label
-                  htmlFor="description"
-                  className="text-[8px] text-muted-foreground"
-                >
-                  description
-                </label>
-                <textarea
-                  id="description"
-                  ref={textAreaRef}
-                  value={description}
-                  onChange={(e) => {
-                    updateNode(id, {
-                      data: { ...data, description: e.target.value },
-                    });
-                  }}
-                  className="w-full border-b focus:outline-none p-1 resize-none rounded-sm text-xs flex-grow"
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
+              <AutoFitTextArea
+                autofocus
+                id={id + "-name"}
+                label="name"
+                value={title}
+                className="border-b p-1 rounded-sm font-semibold bg-background"
+                onChange={(newValue) => {
+                  updateNode(id, {
+                    data: { ...data, title: newValue },
+                  });
+                }}
+              />
+              <AutoFitTextArea
+                id={id + "-description"}
+                label="description"
+                value={description ?? ""}
+                className="border-b p-1 rounded-sm bg-background text-xs flex-grow"
+                containerClassName="flex-grow"
+                onChange={(newValue) => {
+                  updateNode(id, {
+                    data: { ...data, description: newValue },
+                  });
+                }}
+              />
             </div>
           </div>
         </div>

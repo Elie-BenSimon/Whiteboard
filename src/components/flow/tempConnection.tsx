@@ -5,7 +5,7 @@ import {
   useReactFlow,
   ViewportPortal,
 } from "@xyflow/react";
-import { useWhiteBoardContext } from "@/contexts/whiteboardContext";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { getEdgeParams, getEdgePath } from "@/lib/flowUtils";
 import { cn } from "@/lib/utils";
 

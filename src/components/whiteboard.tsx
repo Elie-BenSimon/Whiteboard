@@ -9,6 +9,7 @@ import {
   NodeTypes,
   Node,
   OnNodeDrag,
+  OnSelectionChangeParams,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import StickyNote from "./nodeCards/stickyNote";
@@ -20,10 +21,8 @@ import LocationCard from "./nodeCards/location";
 import ChoicesCard from "./nodeCards/choices";
 import EventCard from "./nodeCards/event";
 import MediaCard from "./nodeCards/media";
-import {
-  useWhiteBoardContext,
-  WhiteBoardProvider,
-} from "../contexts/whiteboardContext";
+import { WhiteBoardProvider } from "../contexts/whiteboardContext";
+import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { cn, saveNodesToLocalStorage } from "@/lib/utils";
 import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
@@ -63,6 +62,8 @@ function WhiteBoard() {
     sourceNode,
     listNodes,
     isDraggingFromList,
+    isWikiLocked,
+    setWikiSelectedNodesId,
     setListNodes,
     onConnect,
     onReconnect,
@@ -99,6 +100,14 @@ function WhiteBoard() {
     [deleteElements, draggedNodes, nodes, setListNodes]
   );
 
+  const onSelectionChange = useCallback(
+    (params: OnSelectionChangeParams) => {
+      if (isWikiLocked || params.nodes.length === 0) return;
+      setWikiSelectedNodesId(params.nodes.map((node) => node.id));
+    },
+    [isWikiLocked, setWikiSelectedNodesId]
+  );
+
   const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
 
   return (
@@ -128,6 +137,7 @@ function WhiteBoard() {
           zoomOnDoubleClick={false}
           minZoom={0.1}
           disableKeyboardA11y
+          onSelectionChange={onSelectionChange}
         >
           <div
             className={cn(

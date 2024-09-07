@@ -61,7 +61,7 @@ const WikiDrawer = () => {
   const getCardComponent = (nodeType: string) => {
     switch (nodeType) {
       case "character":
-        return <CharacterCard />;
+        return <CharacterCard containerWidth={drawerWidth} />;
     }
   };
 
@@ -112,9 +112,9 @@ const WikiDrawer = () => {
             style={{ width: drawerWidth }}
           >
             <div className="h-full overflow-y-scroll px-4">
-              <div className="flex flex-wrap gap-4 py-4">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 py-4">
                 {selectedNodesLength > 1 ? (
-                  <h1 className="w-full text-3xl font-bold">
+                  <h1 className="w-full text-3xl font-bold col-span-full">
                     {`${selectedNodesLength} cartes selectionnées`}
                   </h1>
                 ) : selectedNodesLength === 1 ? (
@@ -124,6 +124,7 @@ const WikiDrawer = () => {
                       "text-3xl font-bold border-b",
                       !selectedNode.data.title && "border-b"
                     )}
+                    containerClassName="col-span-full"
                     placeholder={getCardTitleName(selectedNode.type ?? "")}
                     onChange={(newValue) => {
                       updateNode(selectedNode.id, {
@@ -156,7 +157,7 @@ const WikiDrawer = () => {
                         {!["event"].includes(selectedNode.type ?? "") && (
                           <AutoFitTextArea
                             value={String(selectedNode.data.description ?? "")}
-                            containerClassName="w-[320px] flex-shrink"
+                            containerClassName="col-span-1"
                             className={cn(
                               "text-sm py-2",
                               !selectedNode.data.description && "border-b"

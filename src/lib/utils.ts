@@ -195,3 +195,23 @@ export const getCardTitleName = (nodeType: string) => {
       return capitalizeFirstLetter(nodeType);
   }
 };
+
+export const getColSpan = (
+  number: number,
+  containerWidth: number,
+  maxCellWidth = 192
+) => {
+  const maxSpan = Math.min(number, Math.floor(containerWidth / maxCellWidth));
+  switch (maxSpan) {
+    case 1:
+      return "col-span-1";
+    case 2:
+      return "col-span-2";
+    case 3:
+      return "col-span-3";
+    case 4:
+      return "col-span-4";
+    default:
+      return "col-span-1";
+  }
+};

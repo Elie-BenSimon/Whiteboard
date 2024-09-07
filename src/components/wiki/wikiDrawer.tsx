@@ -61,7 +61,7 @@ const WikiDrawer = () => {
   const getCardComponent = (nodeType: string) => {
     switch (nodeType) {
       case "character":
-        return <CharacterCard containerWidth={drawerWidth} />;
+        return <CharacterCard />;
     }
   };
 
@@ -111,8 +111,13 @@ const WikiDrawer = () => {
             className="overflow-hidden min-w-60"
             style={{ width: drawerWidth }}
           >
-            <div className="h-full overflow-y-scroll px-4">
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 py-4">
+            <div
+              className="h-full overflow-y-scroll"
+              style={{
+                paddingInline: 1 + Math.pow(drawerWidth, 1.37) / 1000 + "%",
+              }}
+            >
+              <div className="grid grid-cols-1 gap-4 py-4">
                 {selectedNodesLength > 1 ? (
                   <h1 className="w-full text-3xl font-bold col-span-full">
                     {`${selectedNodesLength} cartes selectionnées`}

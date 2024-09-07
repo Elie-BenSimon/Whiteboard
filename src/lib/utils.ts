@@ -215,3 +215,24 @@ export const getColSpan = (
       return "col-span-1";
   }
 };
+
+export const getLineClamp = (number: number) => {
+  switch (number) {
+    case 0:
+      return "line-clamp-none";
+    case 1:
+      return "line-clamp-1";
+    case 2:
+      return "line-clamp-2";
+    case 3:
+      return "line-clamp-3";
+    case 4:
+      return "line-clamp-4";
+    case 5:
+      return "line-clamp-5";
+    case 6:
+      return "line-clamp-6";
+    default:
+      return "line-clamp-6";
+  }
+};

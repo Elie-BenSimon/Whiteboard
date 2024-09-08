@@ -138,6 +138,7 @@ function WhiteBoard() {
           minZoom={0.1}
           disableKeyboardA11y
           onSelectionChange={onSelectionChange}
+          fitView
         >
           <div
             className={cn(
@@ -165,15 +166,13 @@ function WhiteBoard() {
             ))}
           </div>
           <Background variant={BackgroundVariant.Dots} />
-          <Controls position="bottom-right" />
           {sourceNode && <TempConnectionLine />}
         </ReactFlow>
       </div>
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+        <EdgesMenu />
         <CardsMenu />
-        <div className="absolute -left-2 -translate-x-full">
-          <EdgesMenu />
-        </div>
+        <Controls className="static bg-card border rounded w-fit grid grid-cols-2 gap-2 m-0" />
       </div>
       <WikiDrawer />
     </div>

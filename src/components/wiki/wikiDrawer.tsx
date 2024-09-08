@@ -21,6 +21,7 @@ const WikiDrawer = () => {
   const selectedNodesLength = wikiSelectedNodes.length;
   const { updateNode } = useReactFlow();
   const selectedNode = wikiSelectedNodes[0];
+  const handleRef = useRef(null);
 
   useEffect(() => {
     setPosition({ x: wikiWidth - WIKI_HANDLE_WIDTH, y: 0 });
@@ -71,6 +72,7 @@ const WikiDrawer = () => {
       className="absolute right-0 z-10 w-4/5 h-full pointer-events-none"
     >
       <Draggable
+        nodeRef={handleRef}
         axis="x"
         bounds={{ left: 0, right: wikiWidth - WIKI_HANDLE_WIDTH }}
         position={position}
@@ -85,7 +87,10 @@ const WikiDrawer = () => {
         }}
         handle=".handle"
       >
-        <div className="flex bg-muted pointer-events-auto h-full shadow-2xl">
+        <div
+          ref={handleRef}
+          className="flex bg-muted pointer-events-auto h-full shadow-2xl"
+        >
           <div
             className={cn(
               "handle h-full p-1 bg-[#50648e] border-x border-[#17171f] text-slate-300 hover:text-slate-100 transition-colors duration-200 shadow-inner cursor-pointer",
@@ -96,7 +101,7 @@ const WikiDrawer = () => {
             <div className="relative h-full group flex flex-col items-center justify-center bg-[#5d73a1a3] border-[#17171f] rounded-lg shadow-inner">
               <p
                 className={cn(
-                  "absolute bottom-16 -rotate-90 whitespace-nowrap font-semibold text-xl text-slate-400 group-hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all duration-500",
+                  "absolute bottom-4 -rotate-90 origin-left self-start left-1/2 whitespace-nowrap font-semibold text-xl text-slate-400 group-hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all duration-500",
                   isDragging && "!opacity-0"
                 )}
               >

@@ -14,7 +14,8 @@ type DrawerItemProps = {
 };
 
 const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
-  const { setListNodes, setIsDraggingFromList } = useWhiteBoardContext();
+  const { setListNodes, setIsDraggingFromList, setWikiSelectedNodesId } =
+    useWhiteBoardContext();
   const { screenToFlowPosition } = useReactFlow();
   const [isDragging, setIsDragging] = useState(false);
   const [axisPosition, setAxisPosition] = useState({ x: 0, y: 0 });
@@ -24,6 +25,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
   const handleDragStart = () => {
     setIsDragging(true);
     setIsDraggingFromList(true);
+    setWikiSelectedNodesId([node.id]);
   };
 
   const handleDragStop = (e: DraggableEvent) => {
@@ -58,14 +60,15 @@ const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
       onStart={handleDragStart}
       onDrag={handleDragging}
       onStop={handleDragStop}
-      position={isDragging ? axisPosition : { x: 0, y: 0 }} // Reset position when not dragging
+      position={isDragging ? axisPosition : { x: 0, y: 0 }}
     >
       <div
         ref={nodeRef}
         className={cn(
-          "flex justify-between items-center group hover:bg-black/5 cursor-grab transition-all px-1.5 rounded-sm",
+          "flex justify-between items-center group hover:bg-black/5 cursor-pointer transition-all px-1.5 rounded-sm",
           isDragging && "cursor-grabbing pointer-events-none"
         )}
+        onClick={() => setWikiSelectedNodesId([node.id])}
       >
         <div className="truncate pointer-events-none">
           {String(node.data.title)}
@@ -73,7 +76,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({ node }) => {
         <Icon
           name="GripHorizontal"
           size={18}
-          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab"
         />
       </div>
     </Draggable>

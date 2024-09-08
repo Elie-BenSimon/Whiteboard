@@ -78,20 +78,25 @@ function WhiteBoard() {
   const onNodeDragStart: OnNodeDrag = useCallback(
     (_, node) => {
       setSourceNode(null);
-      setDraggedNodes([...nodes.filter((node) => node.selected), node]);
+      setDraggedNodes([
+        node,
+        ...nodes.filter(
+          (nodeFromList) => nodeFromList.selected && nodeFromList.id !== node.id
+        ),
+      ]);
     },
     [nodes, setSourceNode]
   );
 
   const onNodeDragStop: OnNodeDrag = useCallback(
     (event) => {
+      setDraggedNodes([]);
       if (event.clientX < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
         const nodesToDelete = draggedNodes.filter(
           (node) =>
             typeof node.data.title === "string" && node.data.title.length > 0
         );
         deleteElements({ nodes: nodesToDelete }).then(({ deletedNodes }) => {
-          setDraggedNodes([]);
           setListNodes((prevNodes) => [...prevNodes, ...deletedNodes]);
           saveNodesToLocalStorage(nodes, "reactFlowNodesList");
         });
@@ -108,10 +113,10 @@ function WhiteBoard() {
     [isWikiLocked, setWikiSelectedNodesId]
   );
 
-  const handleMouseMove = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    if (sourceNode) setMousePosition({ x: event.clientX, y: event.clientY });
+  const handleMouseMove = (event: React.MouseEvent<Element, MouseEvent>) => {
+    if (sourceNode || !!draggedNodes.length) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
     if (!isDrawerOpen && event.clientX < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
       setIsDrawerOpen(true);
       return;
@@ -141,7 +146,7 @@ function WhiteBoard() {
           onReconnect={onReconnect}
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
-          onNodeDrag={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
+          onNodeDrag={handleMouseMove}
           onClick={() => {
             if (sourceNode) setSourceNode(null);
           }}
@@ -182,7 +187,7 @@ function WhiteBoard() {
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">
         <EdgesMenu />
         <CardsMenu />
-        <Controls className="static bg-card border rounded w-fit grid grid-cols-2 gap-2 m-0" />
+        <Controls className="static bg-card border rounded w-fit grid grid-cols-2 gap-1 p-0.5 m-0" />
       </div>
       <WikiDrawer />
     </div>

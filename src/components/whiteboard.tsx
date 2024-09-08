@@ -58,7 +58,6 @@ function WhiteBoard() {
   const {
     nodes,
     edges,
-    mousePosition,
     sourceNode,
     listNodes,
     isDraggingFromList,
@@ -74,6 +73,7 @@ function WhiteBoard() {
   } = useWhiteBoardContext();
   const { deleteElements } = useReactFlow();
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const onNodeDragStart: OnNodeDrag = useCallback(
     (_, node) => {
@@ -108,14 +108,25 @@ function WhiteBoard() {
     [isWikiLocked, setWikiSelectedNodesId]
   );
 
+  const handleMouseMove = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (sourceNode) setMousePosition({ x: event.clientX, y: event.clientY });
+    if (!isDrawerOpen && event.clientX < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
+      setIsDrawerOpen(true);
+      return;
+    }
+    if (isDrawerOpen && event.clientX > DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
+      setIsDrawerOpen(false);
+    }
+  };
+
   const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
 
   return (
     <div
       className="relative w-full h-full flex overflow-hidden"
-      onMouseMove={(e) => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
-      }}
+      onMouseMove={handleMouseMove}
     >
       <div className="reactflow-wrapper h-full w-full">
         <ReactFlow
@@ -143,8 +154,7 @@ function WhiteBoard() {
           <div
             className={cn(
               "relative bg-card h-full border-r -translate-x-full transition-transform p-2 px-3 flex flex-col gap-2",
-              mousePosition.x < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN &&
-                "translate-x-0",
+              isDrawerOpen && "translate-x-0",
               !draggedNodes.length && "z-20",
               !isDraggingFromList && "overflow-y-scroll"
             )}

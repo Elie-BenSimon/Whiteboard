@@ -9,7 +9,7 @@ type BaseCardProps = {
 
 const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
   const { id, children, selected } = props;
-  const { onCardClick, sourceNode } = useWhiteBoardContext();
+  const { onCardClick, sourceNode, setMousePosition } = useWhiteBoardContext();
   const isSourceNode = sourceNode?.id === id;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -31,7 +31,7 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
         return;
       }
     }
-
+    setMousePosition({ x: e.clientX, y: e.clientY });
     onCardClick(props);
   };
 

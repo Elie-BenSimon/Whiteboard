@@ -1,4 +1,9 @@
-import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./accordion";
 
 type WikiCardProps = {
   title?: string;
@@ -14,17 +19,28 @@ const WikiCard: React.FC<WikiCardProps> = ({
   handleClick,
 }) => {
   return (
-    <div
-      className={cn(
-        "col-span-1 w-full flex flex-col p-4 bg-card border rounded-md flex-shrink shadow-sm",
-        handleClick && "cursor-pointer"
-      )}
-      onClick={handleClick}
+    <Accordion
+      type="single"
+      collapsible
+      className="bg-card border rounded-md flex-shrink shadow-sm px-4"
     >
-      <h2 className="text-xl font-bold">{title}</h2>
-      <p className="text-sm">{description}</p>
-      {children}
-    </div>
+      <AccordionItem value="content" className="border-0">
+        <AccordionTrigger className="py-4">
+          <h2
+            onClick={() => {
+              if (handleClick) handleClick();
+            }}
+            className="text-xl font-bold text-left"
+          >
+            {title}
+          </h2>
+        </AccordionTrigger>
+        <AccordionContent>
+          <p className="text-sm">{description}</p>
+          {children}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

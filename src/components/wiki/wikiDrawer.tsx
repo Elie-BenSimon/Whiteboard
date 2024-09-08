@@ -17,7 +17,8 @@ const WikiDrawer = () => {
   const [drawerWidth, setDrawerWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const wikiContainerRef = useRef<HTMLDivElement>(null);
-  const { wikiSelectedNodes, setWikiSelectedNodesId } = useWhiteBoardContext();
+  const { wikiSelectedNodes, setWikiSelectedNodesId, edges, nodes } =
+    useWhiteBoardContext();
   const selectedNodesLength = wikiSelectedNodes.length;
   const { updateNode } = useReactFlow();
   const selectedNode = wikiSelectedNodes[0];
@@ -65,6 +66,23 @@ const WikiDrawer = () => {
         return <CharacterCard />;
     }
   };
+
+  const linkedNodes =
+    selectedNode && selectedNodesLength === 1
+      ? edges
+          .filter(
+            (edge) =>
+              edge.source === selectedNode.id || edge.target === selectedNode.id
+          )
+          .map(
+            (link) =>
+              nodes.filter(
+                (node) =>
+                  (node.id === link.target || node.id === link.source) &&
+                  node.id !== selectedNode.id
+              )[0]
+          )
+      : null;
 
   return (
     <div
@@ -122,36 +140,59 @@ const WikiDrawer = () => {
                 paddingInline: 1 + Math.pow(drawerWidth, 1.37) / 1000 + "%",
               }}
             >
-              <div className="grid grid-cols-1 gap-4 py-4">
-                {selectedNodesLength > 1 ? (
-                  <h1 className="w-full text-3xl font-bold col-span-full">
-                    {`${selectedNodesLength} cartes selectionnées`}
-                  </h1>
-                ) : selectedNodesLength === 1 ? (
-                  <AutoFitTextArea
-                    value={String(selectedNode.data.title ?? "")}
-                    className={cn(
-                      "text-3xl font-bold border-b",
-                      !selectedNode.data.title && "border-b"
+              <div className="grid grid-cols-1 gap-2 py-4">
+                <header className="mb-4 flex flex-col gap-2">
+                  {selectedNodesLength > 1 ? (
+                    <h1 className="w-full text-3xl font-bold col-span-full">
+                      {`${selectedNodesLength} cartes selectionnées`}
+                    </h1>
+                  ) : selectedNodesLength === 1 ? (
+                    <AutoFitTextArea
+                      value={String(selectedNode.data.title ?? "")}
+                      className={cn(
+                        "text-3xl font-bold border-b",
+                        !selectedNode.data.title && "border-b"
+                      )}
+                      containerClassName="col-span-full"
+                      placeholder={getCardTitleName(selectedNode.type ?? "")}
+                      onChange={(newValue) => {
+                        updateNode(selectedNode.id, {
+                          data: {
+                            ...selectedNode.data,
+                            title: newValue,
+                          },
+                        });
+                      }}
+                    />
+                  ) : (
+                    <h1 className="w-full text-3xl font-bold">
+                      {
+                        "Sélectionnez une ou plusieurs note pour voir leur informations plus en détails ici"
+                      }
+                    </h1>
+                  )}
+                  {wikiSelectedNodes &&
+                    selectedNodesLength === 1 &&
+                    !["event"].includes(selectedNode.type ?? "") && (
+                      <AutoFitTextArea
+                        value={String(selectedNode.data.description ?? "")}
+                        containerClassName="col-span-1"
+                        className={cn(
+                          "text-sm py-2",
+                          !selectedNode.data.description && "border-b"
+                        )}
+                        placeholder="description"
+                        onChange={(newValue) => {
+                          updateNode(selectedNode.id, {
+                            data: {
+                              ...selectedNode.data,
+                              description: newValue,
+                            },
+                          });
+                        }}
+                      />
                     )}
-                    containerClassName="col-span-full"
-                    placeholder={getCardTitleName(selectedNode.type ?? "")}
-                    onChange={(newValue) => {
-                      updateNode(selectedNode.id, {
-                        data: {
-                          ...selectedNode.data,
-                          title: newValue,
-                        },
-                      });
-                    }}
-                  />
-                ) : (
-                  <h1 className="w-full text-3xl font-bold">
-                    {
-                      "Sélectionnez une ou plusieurs note pour voir leur informations plus en détails ici"
-                    }
-                  </h1>
-                )}
+                </header>
                 {wikiSelectedNodes && !!selectedNodesLength && (
                   <>
                     {selectedNodesLength > 1 ? (
@@ -164,54 +205,16 @@ const WikiDrawer = () => {
                       ))
                     ) : (
                       <>
-                        {!["event"].includes(selectedNode.type ?? "") && (
-                          <AutoFitTextArea
-                            value={String(selectedNode.data.description ?? "")}
-                            containerClassName="col-span-1"
-                            className={cn(
-                              "text-sm py-2",
-                              !selectedNode.data.description && "border-b"
-                            )}
-                            placeholder="description"
-                            onChange={(newValue) => {
-                              updateNode(selectedNode.id, {
-                                data: {
-                                  ...selectedNode.data,
-                                  description: newValue,
-                                },
-                              });
-                            }}
-                          />
-                        )}
                         {getCardComponent(selectedNode.type ?? "")}
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae mollitia nihil modi nam beatae veniam, cumque enim amet veritatis optio aspernatur sequi delectus earum vero velit cum magni fugiat. Ratione quis nisi aperiam unde."
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem cumque maxime aliquam nihil placeat delectus quas hic ad repellat earum saepe doloribus doloremque veritatis, praesentium ratione deserunt sequi est minus. Aliquid illo quidem harum quis nam quia laboriosam neque, et, facere accusantium molestiae consequuntur eligendi fugiat voluptatibus quibusdam? Corporis asperiores ratione error qui sunt porro aliquam sit, consequuntur ducimus dicta ullam, incidunt pariatur alias ea."
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore placeat aliquid eum, assumenda tenetur debitis rem aut cumque, sit alias vitae modi soluta qui dolores sint illo quos, maxime sequi voluptatibus iste! Dicta, illum deleniti voluptas maiores sit natus illo at rerum odio corrupti aspernatur velit nihil blanditiis quidem omnis numquam qui repudiandae! Doloribus beatae eligendi quidem tempora nam iusto adipisci eos, quis dolorem corrupti ratione inventore perspiciatis eaque illo dolor quo nesciunt accusantium! Architecto eaque vel eveniet animi natus magnam sed ex ipsum laborum itaque porro veniam cum commodi error minus atque quasi dicta nobis culpa, beatae necessitatibus corrupti suscipit. Quibusdam, molestias dolore nemo nostrum molestiae ratione! Itaque ipsam molestiae ab earum ex animi laboriosam esse, sit, asperiores pariatur laborum perspiciatis atque repellendus, magni eveniet eligendi! Laboriosam nihil placeat odio culpa dolorem perspiciatis in quaerat maxime expedita quis, possimus excepturi nesciunt eos minus a fugiat nisi natus reprehenderit commodi quibusdam! Facere quis animi provident autem architecto dignissimos, sit, consequatur iure suscipit iste minima laborum, voluptatem quos fugiat error ducimus eos quo neque. Veritatis aut nam iusto beatae, blanditiis nulla eius. Eius adipisci fugit tempore, nesciunt labore nemo eum repellendus autem fugiat animi! Laborum iste dolorum minima architecto! Nisi exercitationem explicabo amet, sapiente eveniet id voluptate pariatur ratione provident nam, quas cupiditate quibusdam aliquid neque velit corrupti, fuga obcaecati quisquam aut error tempora similique nemo consectetur cum? Suscipit aliquam itaque nostrum ipsa non magnam perferendis rem aut sequi harum eius quae, minima mollitia. Fugit, dolore."
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Non explicabo debitis nemo, rerum corrupti fuga. Velit amet ullam sapiente nemo, assumenda ex laborum voluptatibus modi quibusdam. Voluptatibus excepturi officiis impedit doloribus deleniti maiores ipsa repudiandae, expedita numquam ipsam, sequi dolorem libero. Quos cum vitae minus ipsam? Fugiat corrupti labore eligendi amet ad nostrum blanditiis repudiandae debitis minima aut excepturi aliquam, enim quisquam rem obcaecati cumque nam suscipit id reiciendis! Quae, atque!"
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Non explicabo debitis nemo, rerum corrupti fuga. Velit amet ullam sapiente nemo, assumenda ex laborum voluptatibus modi quibusdam. Voluptatibus excepturi officiis impedit doloribus deleniti maiores ipsa repudiandae, expedita numquam ipsam, sequi dolorem libero. Quos cum vitae minus ipsam? Fugiat corrupti labore eligendi amet ad nostrum blanditiis repudiandae debitis minima aut excepturi aliquam, enim quisquam rem obcaecati cumque nam suscipit id reiciendis! Quae, atque!"
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae mollitia nihil modi nam beatae veniam, cumque enim amet veritatis optio aspernatur sequi delectus earum vero velit cum magni fugiat. Ratione quis nisi aperiam unde."
-                        ></WikiCard>
-                        <WikiCard
-                          title={"test de carte"}
-                          description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem cumque maxime aliquam nihil placeat delectus quas hic ad repellat earum saepe doloribus doloremque veritatis, praesentium ratione deserunt sequi est minus. Aliquid illo quidem harum quis nam quia laboriosam neque, et, facere accusantium molestiae consequuntur eligendi fugiat voluptatibus quibusdam? Corporis asperiores ratione error qui sunt porro aliquam sit, consequuntur ducimus dicta ullam, incidunt pariatur alias ea."
-                        ></WikiCard>
+                        {linkedNodes && !!linkedNodes.length && (
+                          <WikiCard title={"Liens"}>
+                            <ul>
+                              {linkedNodes.map((link) => (
+                                <li>{String(link.data.title ?? "")}</li>
+                              ))}
+                            </ul>
+                          </WikiCard>
+                        )}
                       </>
                     )}
                   </>

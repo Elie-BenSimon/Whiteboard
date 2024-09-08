@@ -8,6 +8,7 @@ import AutoFitTextArea from "../ui/autoFitTextArea";
 import CharacterCard from "./characterCard";
 import { cn, getCardTitleName } from "@/lib/utils";
 import { WIKI_HANDLE_WIDTH } from "@/config/constants";
+import { Button } from "../ui/button";
 
 const WikiDrawer = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -17,7 +18,7 @@ const WikiDrawer = () => {
   const [drawerWidth, setDrawerWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const wikiContainerRef = useRef<HTMLDivElement>(null);
-  const { wikiSelectedNodes, setWikiSelectedNodesId, edges, nodes } =
+  const { wikiSelectedNodes, setWikiSelectedNodes, edges, nodes } =
     useWhiteBoardContext();
   const selectedNodesLength = wikiSelectedNodes.length;
   const { updateNode } = useReactFlow();
@@ -82,6 +83,7 @@ const WikiDrawer = () => {
                   node.id !== selectedNode.id
               )[0]
           )
+          .filter((item) => !!item)
       : null;
 
   return (
@@ -198,9 +200,10 @@ const WikiDrawer = () => {
                     {selectedNodesLength > 1 ? (
                       wikiSelectedNodes.map((node) => (
                         <WikiCard
+                          key={node.id}
                           title={String(node.data.title ?? "")}
                           description={String(node.data.description ?? "")}
-                          handleClick={() => setWikiSelectedNodesId([node.id])}
+                          handleClick={() => setWikiSelectedNodes([node])}
                         />
                       ))
                     ) : (
@@ -208,9 +211,17 @@ const WikiDrawer = () => {
                         {getCardComponent(selectedNode.type ?? "")}
                         {linkedNodes && !!linkedNodes.length && (
                           <WikiCard title={"Liens"}>
-                            <ul>
+                            <ul className="flex flex-col gap-1">
                               {linkedNodes.map((link) => (
-                                <li>{String(link.data.title ?? "")}</li>
+                                <li key={link.id}>
+                                  <Button
+                                    variant={"link"}
+                                    className="p-0 h-fit"
+                                    onClick={() => setWikiSelectedNodes([link])}
+                                  >
+                                    {String(link.data.title ?? "")}
+                                  </Button>
+                                </li>
                               ))}
                             </ul>
                           </WikiCard>

@@ -16,30 +16,34 @@ const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
   const [isDescriptionEditable, setIsDescriptionEditable] = useState(
     !!data.description
   );
-  const titleId = id + "-title";
-  const descriptionId = id + "-description";
+
+  const titleId = "title-" + id;
+  const descriptionId = "description-" + id;
 
   const handleTitleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const titleElement = e.currentTarget;
-    const descriptionElement = document.getElementById(
-      descriptionId
-    ) as HTMLTextAreaElement;
     const isCaretAtEnd =
       titleElement.selectionStart === titleElement.selectionEnd &&
       titleElement.selectionStart === titleElement.value.length;
+    const descriptionElement = document.getElementById(
+      descriptionId
+    ) as HTMLTextAreaElement;
 
     if (
       title.length &&
       e.key === "Enter" &&
       isCaretAtEnd &&
-      !descriptionElement.value
+      !descriptionElement?.value
     ) {
       e.preventDefault();
       e.currentTarget.blur();
       setIsDescriptionEditable(true);
       setTimeout(() => {
+        const descriptionElement = document.getElementById(
+          descriptionId
+        ) as HTMLTextAreaElement;
         descriptionElement?.focus();
-      }, 0);
+      }, 1);
     }
   };
 
@@ -60,6 +64,7 @@ const StickyNote: React.FC<NodeProps & StickyNoteProps> = (props) => {
         <CardHeader color="bg-yellow-100" />
         <div className="min-h-[168px] w-48 p-4 bg-yellow-100/30 flex flex-col items-center justify-center border-t border-white rounded">
           <AutoFitTextArea
+            autofocus
             id={titleId}
             value={title}
             onChange={(newValue) => {

@@ -7,8 +7,8 @@ import { useReactFlow } from "@xyflow/react";
 import AutoFitTextArea from "../ui/autoFitTextArea";
 import CharacterCard from "./characterCard";
 import { cn, getCardTitleName } from "@/lib/utils";
-import { WIKI_HANDLE_WIDTH } from "@/config/constants";
 import { Button } from "../ui/button";
+import { WIKI_HANDLE_WIDTH } from "@/config/constants";
 
 const WikiDrawer = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -18,7 +18,7 @@ const WikiDrawer = () => {
   const [drawerWidth, setDrawerWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const wikiContainerRef = useRef<HTMLDivElement>(null);
-  const { wikiSelectedNodes, setWikiSelectedNodes, edges, nodes } =
+  const { wikiSelectedNodes, setWikiSelectedNodesId, edges, nodes } =
     useWhiteBoardContext();
   const selectedNodesLength = wikiSelectedNodes.length;
   const { updateNode } = useReactFlow();
@@ -203,7 +203,7 @@ const WikiDrawer = () => {
                           key={node.id}
                           title={String(node.data.title ?? "")}
                           description={String(node.data.description ?? "")}
-                          handleClick={() => setWikiSelectedNodes([node])}
+                          handleClick={() => setWikiSelectedNodesId([node.id])}
                         />
                       ))
                     ) : (
@@ -217,7 +217,9 @@ const WikiDrawer = () => {
                                   <Button
                                     variant={"link"}
                                     className="p-0 h-fit"
-                                    onClick={() => setWikiSelectedNodes([link])}
+                                    onClick={() =>
+                                      setWikiSelectedNodesId([link.id])
+                                    }
                                   >
                                     {String(link.data.title ?? "")}
                                   </Button>

@@ -84,8 +84,11 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [wikiSelectedNodesId, setWikiSelectedNodesId] = useState<string[]>([]);
   const wikiSelectedNodes = useMemo(
-    () => nodes.filter((node) => wikiSelectedNodesId.includes(node.id)),
-    [nodes, wikiSelectedNodesId]
+    () => [
+      ...nodes.filter((node) => wikiSelectedNodesId.includes(node.id)),
+      ...listNodes.filter((node) => wikiSelectedNodesId.includes(node.id)),
+    ],
+    [listNodes, nodes, wikiSelectedNodesId]
   );
   const [isWikiLocked, setIsWikiLocked] = useState(false);
 

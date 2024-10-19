@@ -45,7 +45,7 @@ const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
     >
       <div
         className={cn(
-          "relative shadow rounded border-2 border-[#17171f] transition-all duration-75 ease-cubic",
+          "relative shadow rounded overflow-hidden border-2 border-[#17171f] transition-all duration-75 ease-cubic",
           selected
             ? "shadow-card-selected hover:shadow-card-selected-hover"
             : "shadow-md-plus hover:shadow-card-hover"

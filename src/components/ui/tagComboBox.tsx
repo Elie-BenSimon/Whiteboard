@@ -35,9 +35,11 @@ const TagCombobox: React.FC<TagComboboxProps> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="bg-blue-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-sm border hover:opacity-90 hover:-translate-y-[1px] hover:shadow transition-all">
-          +
-        </button>
+        <div>
+          <button className="bg-blue-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-sm border hover:opacity-90 hover:-translate-y-[1px] hover:shadow transition-all">
+            +
+          </button>
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0 prevent-source-node">
         <Command>
@@ -72,6 +74,7 @@ const TagCombobox: React.FC<TagComboboxProps> = ({
                 <CommandItem
                   key={tag.id}
                   value={tag.id}
+                  className="cursor-pointer"
                   onSelect={(currentValue) => {
                     setValue("");
                     if (selectedTags.includes(currentValue)) {

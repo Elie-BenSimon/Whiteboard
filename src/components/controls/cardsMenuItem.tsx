@@ -53,16 +53,23 @@ const CardsMenuItem: React.FC<CardsMenuItemProps> = ({
       onStop={handleDragStop}
       position={axisPosition}
     >
-      <div
-        ref={nodeRef}
-        className={cn(
-          "cursor-grab w-11 h-11 rounded flex justify-center items-center",
-          color,
-          isDragging && "pointer-events-none"
-        )}
-      >
-        <Icon name={icon} />
-      </div>
+      <span ref={nodeRef} className={cn(isDragging && "pointer-events-none")}>
+        <div
+          className={cn(
+            "group cursor-grab w-11 h-11 rounded flex justify-center items-center shadow-sm hover:scale-105 hover-shadow transition-all",
+            color,
+            isDragging && "shadow-md scale-110"
+          )}
+        >
+          <Icon
+            name={icon}
+            className={cn(
+              "group-hover:scale-105 transition-transform",
+              isDragging && "scale-110"
+            )}
+          />
+        </div>
+      </span>
     </Draggable>
   );
 };

@@ -10,6 +10,7 @@ import {
   Node,
   OnNodeDrag,
   OnSelectionChangeParams,
+  SelectionMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import StickyNote from "../nodeCards/stickyNote";
@@ -123,7 +124,7 @@ function WhiteBoard() {
   };
 
   const typesList: Array<NodeType> = Object.keys(nodeTypes) as Array<NodeType>;
-
+  const panOnDrag = [1, 2];
   return (
     <div
       className="relative w-full h-full flex overflow-hidden"
@@ -149,6 +150,10 @@ function WhiteBoard() {
           disableKeyboardA11y
           onSelectionChange={onSelectionChange}
           fitView
+          panOnScroll
+          selectionOnDrag
+          panOnDrag={panOnDrag}
+          selectionMode={SelectionMode.Partial}
         >
           <div
             className={cn(

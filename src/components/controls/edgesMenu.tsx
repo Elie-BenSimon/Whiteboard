@@ -16,7 +16,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { EdgeShapes } from "@/lib/flowUtils";
 
 const EdgesMenu = () => {
-  const { linkMode, edgeParams, setLinkMode, setSourceNode, setEdgeParams } =
+  const { linkMode, edgeParams, setLinkMode, setEdgeParams } =
     useWhiteBoardContext();
 
   const shapes: EdgeShapes[] = ["bezier", "straight", "step"];
@@ -26,7 +26,6 @@ const EdgesMenu = () => {
         className="rounded-full p-0 w-5 h-5 border"
         onClick={() => {
           setLinkMode((prev) => !prev);
-          setSourceNode(null);
         }}
       >
         <Icon name={linkMode ? "Link2" : "Link2Off"} size={14} />

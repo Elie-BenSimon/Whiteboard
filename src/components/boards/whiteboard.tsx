@@ -12,23 +12,22 @@ import {
   OnSelectionChangeParams,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import StickyNote from "./nodeCards/stickyNote";
-import FloatingEdge from "./flow/floatingEdge";
-import FloatingConnectionLine from "./flow/floatingConnectionLine";
-import CardsMenu from "./controls/cardsMenu";
-import CharacterCard from "./nodeCards/character";
-import LocationCard from "./nodeCards/location";
-import ChoicesCard from "./nodeCards/choices";
-import EventCard from "./nodeCards/event";
-import MediaCard from "./nodeCards/media";
-import { WhiteBoardProvider } from "../contexts/whiteboardContext";
+import StickyNote from "../nodeCards/stickyNote";
+import FloatingEdge from "../flow/floatingEdge";
+import FloatingConnectionLine from "../flow/floatingConnectionLine";
+import CardsMenu from "../controls/cardsMenu";
+import CharacterCard from "../nodeCards/character";
+import LocationCard from "../nodeCards/location";
+import ChoicesCard from "../nodeCards/choices";
+import EventCard from "../nodeCards/event";
+import MediaCard from "../nodeCards/media";
+import { WhiteBoardProvider } from "../../contexts/whiteboardContext";
 import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { cn, saveNodesToLocalStorage } from "@/lib/utils";
-import TempConnectionLine from "./flow/tempConnection";
 import { DRAWER_WIDTH, DRAWER_WIDTH_MARGIN } from "@/config/constants";
-import EdgesMenu from "./controls/edgesMenu";
-import DrawerItem from "./controls/drawerItem";
-import WikiDrawer from "./wiki/wikiDrawer";
+import EdgesMenu from "../controls/edgesMenu";
+import DrawerItem from "../controls/drawerItem";
+import WikiDrawer from "../wiki/wikiDrawer";
 
 const nodeTypes = {
   stickyNote: StickyNote,
@@ -58,7 +57,6 @@ function WhiteBoard() {
   const {
     nodes,
     edges,
-    sourceNode,
     listNodes,
     isDraggingFromList,
     isWikiLocked,
@@ -69,7 +67,6 @@ function WhiteBoard() {
     onNodesChange,
     onEdgesChange,
     setMousePosition,
-    setSourceNode,
   } = useWhiteBoardContext();
   const { deleteElements } = useReactFlow();
   const [draggedNodes, setDraggedNodes] = useState<Node[]>([]);
@@ -77,7 +74,6 @@ function WhiteBoard() {
 
   const onNodeDragStart: OnNodeDrag = useCallback(
     (_, node) => {
-      setSourceNode(null);
       setDraggedNodes([
         node,
         ...nodes.filter(
@@ -85,7 +81,7 @@ function WhiteBoard() {
         ),
       ]);
     },
-    [nodes, setSourceNode]
+    [nodes]
   );
 
   const onNodeDragStop: OnNodeDrag = useCallback(
@@ -114,7 +110,7 @@ function WhiteBoard() {
   );
 
   const handleMouseMove = (event: React.MouseEvent<Element, MouseEvent>) => {
-    if (sourceNode || !!draggedNodes.length) {
+    if (draggedNodes.length) {
       setMousePosition({ x: event.clientX, y: event.clientY });
     }
     if (!isDrawerOpen && event.clientX < DRAWER_WIDTH + DRAWER_WIDTH_MARGIN) {
@@ -147,11 +143,9 @@ function WhiteBoard() {
           onNodeDragStop={onNodeDragStop}
           onNodeDragStart={onNodeDragStart}
           onNodeDrag={handleMouseMove}
-          onClick={() => {
-            if (sourceNode) setSourceNode(null);
-          }}
           zoomOnDoubleClick={false}
-          minZoom={0.1}
+          minZoom={0.2}
+          maxZoom={1}
           disableKeyboardA11y
           onSelectionChange={onSelectionChange}
           fitView
@@ -181,7 +175,6 @@ function WhiteBoard() {
             ))}
           </div>
           <Background variant={BackgroundVariant.Dots} />
-          {sourceNode && <TempConnectionLine />}
         </ReactFlow>
       </div>
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">

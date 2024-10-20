@@ -1,4 +1,3 @@
-import { useWhiteBoardContext } from "@/hooks/useWhiteBoardContext";
 import { cn } from "@/lib/utils";
 import { Handle, Position, NodeProps } from "@xyflow/react";
 import React from "react";
@@ -8,50 +7,16 @@ type BaseCardProps = {
 };
 
 const BaseCard: React.FC<BaseCardProps & NodeProps> = (props) => {
-  const { id, children, selected } = props;
-  const { onCardClick, sourceNode, setMousePosition } = useWhiteBoardContext();
-  const isSourceNode = sourceNode?.id === id;
-
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (sourceNode === null) {
-      let targetElement = e.target as Element;
-      while (
-        targetElement &&
-        !["BUTTON", "INPUT", "TEXTAREA"].includes(targetElement.tagName) &&
-        !targetElement.classList.contains("prevent-source-node")
-      ) {
-        targetElement = targetElement.parentElement as Element;
-      }
-
-      if (
-        targetElement &&
-        (["BUTTON", "INPUT", "TEXTAREA"].includes(targetElement.tagName) ||
-          targetElement.classList.contains("prevent-source-node"))
-      ) {
-        return;
-      }
-    }
-    setMousePosition({ x: e.clientX, y: e.clientY });
-    onCardClick(props);
-  };
+  const { children, selected } = props;
 
   return (
     <div
       className={cn(
         "rounded transition-transform p-1",
-        isSourceNode && "border-dance animate-border-dance",
-        selected ? "scale-[105%] hover:scale-[106%]" : "hover:scale-[101%]"
+        selected && "border-dance animate-border-dance scale-105"
       )}
     >
-      <div
-        className={cn(
-          "relative shadow rounded overflow-hidden border-2 border-[#17171f] transition-all duration-75 ease-cubic",
-          selected
-            ? "shadow-card-selected hover:shadow-card-selected-hover"
-            : "shadow-md-plus hover:shadow-card-hover"
-        )}
-        onClick={handleCardClick}
-      >
+      <div className="relative rounded overflow-hidden border-2 border-[#17171f] transition-all duration-75 ease-cubic shadow-md">
         <Handle
           id="target"
           type="target"

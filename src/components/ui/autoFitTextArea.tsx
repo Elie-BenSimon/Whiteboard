@@ -35,7 +35,7 @@ const AutoFitTextArea: React.FC<AutoFitTextAreaProps> = ({
 
   useEffect(() => {
     if (autofocus) {
-      const timer = setTimeout(() => textareaRef.current?.focus(), 15);
+      const timer = setTimeout(() => textareaRef.current?.focus(), 20);
       return () => {
         clearTimeout(timer);
       };
@@ -53,7 +53,7 @@ const AutoFitTextArea: React.FC<AutoFitTextAreaProps> = ({
         id={id}
         ref={textareaRef}
         className={cn(
-          "h-auto focus:outline-none resize-none overflow-hidden w-full bg-transparent",
+          "h-auto focus:outline-none resize-none overflow-hidden w-full bg-transparent focus:placeholder:text-transparent",
           className
         )}
         value={value}

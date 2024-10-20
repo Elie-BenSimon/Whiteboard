@@ -18,7 +18,7 @@ const CardsMenuItem: React.FC<CardsMenuItemProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [axisPosition, setAxisPosition] = useState({ x: 0, y: 0 });
-  const { addNodes } = useReactFlow();
+  const { addNodes, screenToFlowPosition } = useReactFlow();
   const nodeRef = React.useRef(null);
 
   const handleDragStart = () => {
@@ -36,7 +36,7 @@ const CardsMenuItem: React.FC<CardsMenuItemProps> = ({
     addNodes({
       id: uuidV4(),
       type: nodeType,
-      position: { x: event.clientX, y: event.clientY },
+      position: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
       data: { title: "" },
     });
   };

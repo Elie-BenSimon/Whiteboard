@@ -62,11 +62,6 @@ module.exports = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		boxShadow: {
-  			'card-hover': '0 3px 5px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-  			'card-selected': '0 4px 10px -1px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)',
-  			'card-selected-hover': '0 6px 12px -1px rgb(0 0 0 / 0.06), 0 5px 7px -5px rgb(0 0 0 / 0.06)'
-  		},
   		keyframes: {
   			'accordion-down': {
   				from: {

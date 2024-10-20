@@ -9,11 +9,9 @@ import {
   useNodesState,
   OnEdgesChange,
   OnNodesChange,
-  NodeProps,
   NodeChange,
   EdgeChange,
 } from "@xyflow/react";
-import { v4 as uuidV4 } from "uuid";
 import {
   deleteEdgesFromLocalStorage,
   deleteNodesFromLocalStorage,
@@ -34,10 +32,8 @@ interface WhiteBoardContextProps {
   listNodes: Node[];
   mousePosition: { x: number; y: number };
   nodes: Node[];
-  sourceNode: NodeProps | null;
   wikiSelectedNodes: Node[];
   wikiSelectedNodesId: string[];
-  onCardClick: (node: NodeProps) => void;
   onConnect: (params: Connection) => void;
   onEdgesChange: OnEdgesChange<Edge>;
   onNodesChange: OnNodesChange<Node>;
@@ -50,7 +46,6 @@ interface WhiteBoardContextProps {
   setListNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setMousePosition: (position: { x: number; y: number }) => void;
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-  setSourceNode: React.Dispatch<React.SetStateAction<NodeProps | null>>;
   setWikiSelectedNodesId: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
@@ -68,7 +63,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
     loadEdgesFromLocalStorage("reactFlowEdges")
   );
   const [linkMode, setLinkMode] = useState(true);
-  const [sourceNode, setSourceNode] = useState<NodeProps | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [edgeParams, setEdgeParams] = useState<EdgeParams>({
     animated: false,
@@ -91,35 +85,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
     [listNodes, nodes, wikiSelectedNodesId]
   );
   const [isWikiLocked, setIsWikiLocked] = useState(false);
-
-  const onCardClick = useCallback(
-    (node: NodeProps) => {
-      if (linkMode) {
-        if (sourceNode) {
-          const newEdge: Edge = {
-            id: uuidV4(),
-            source: sourceNode.id,
-            target: node.id,
-            type: "floating",
-            sourceHandle: "source",
-            targetHandle: "target",
-            style: {
-              stroke: edgeParams.color,
-              strokeWidth: 4,
-            },
-            data: { shape: edgeParams.shape },
-            animated: edgeParams.animated,
-          };
-          setEdges((eds) => addEdge(newEdge, eds));
-          saveEdgesToLocalStorage([newEdge], "reactFlowEdges");
-          setSourceNode(null);
-        } else {
-          setSourceNode(node);
-        }
-      }
-    },
-    [edgeParams, linkMode, setEdges, sourceNode]
-  );
 
   const onConnect = useCallback(
     (params: Connection) =>
@@ -146,7 +111,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
       if (changes[0].type !== "remove") {
         saveNodesToLocalStorage(nodes, "reactFlowNodes");
       } else {
-        setSourceNode(null);
         const nodeIds = changes.map(
           (change) => (change as unknown as { id: string }).id
         );
@@ -184,10 +148,8 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         listNodes,
         mousePosition,
         nodes,
-        sourceNode,
         wikiSelectedNodes,
         wikiSelectedNodesId,
-        onCardClick,
         onConnect,
         onEdgesChange,
         onNodesChange,
@@ -200,7 +162,6 @@ export const WhiteBoardProvider: React.FC<{ children: React.ReactNode }> = ({
         setListNodes,
         setMousePosition,
         setNodes,
-        setSourceNode,
         setWikiSelectedNodesId,
       }}
     >

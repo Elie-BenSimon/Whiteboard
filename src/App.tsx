@@ -1,4 +1,4 @@
-import WhiteBoardAppWrapper from "./components/whiteboard";
+import WhiteBoardAppWrapper from "./components/boards/whiteboard";
 
 function App() {
   return (

@@ -154,6 +154,7 @@ function WhiteBoard() {
           selectionOnDrag
           panOnDrag={panOnDrag}
           selectionMode={SelectionMode.Partial}
+          panOnScrollSpeed={1.75}
         >
           <div
             className={cn(
